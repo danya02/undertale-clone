@@ -19,7 +19,7 @@ def invoke_dog():
         pygame.display.update()
         pygame.time.wait(250)
         d.fill(pygame.Color(0,0,0,255))
-        d.blit(s2, (400 - int(s2.get_width()/2), 300 - int(s2.get_height()/2)))
+        d.blit(s2, (400 - int(s1.get_width()/2), 300 - int(s1.get_height()/2)))
         pygame.display.update()
         pygame.time.wait(250)
 invoke_dog()
