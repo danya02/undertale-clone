@@ -69,6 +69,10 @@ def intro(type=0):
         d.blit(images[1], (400-(images[1].get_width()/2), 0))
         pygame.display.update()
         pygame.time.wait(5000)
-
+    elif type == 2: # world destroyed
+        pygame.mixer.music.load("mus/mus_wind.ogg")
+        pygame.mixer.music.play(-1)
+        for i in range(600):
+            pygame.time.wait(1000)
 intro(0)
 invoke_dog("Not implemented.")
