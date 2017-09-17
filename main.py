@@ -34,26 +34,41 @@ def invoke_dog(text=""):
         pygame.display.update()
         pygame.time.wait(250)
 
-def intro():
-    pygame.mixer.music.load("mus/mus_story_91.ogg")
-    images = []
-    for i in range(11):
-        images += [pygame.image.load("sprites/spr_introimage_"+str(i)+".png")]
-    images = [scale(i, 3) for i in images]
-    delays = [8000, 7000, 8000, 6000, 6000, 6000, 8000, 6000, 8000, 8000, 15000]
-    pygame.mixer.music.play()
-    for i,j in zip(images, delays):
-        d.blit(i, (400-(i.get_width()/2), 0))
+def intro(type=0):
+    if type == 0: # normal intro
+        pygame.mixer.music.load("mus/mus_story_91.ogg")
+        images = []
+        for i in range(11):
+            images += [pygame.image.load("sprites/spr_introimage_"+str(i)+".png")]
+        images = [scale(i, 3) for i in images]
+        delays = [8000, 7000, 8000, 6000, 6000, 6000, 8000, 6000, 8000, 8000, 15000]
+        pygame.mixer.music.play()
+        for i,j in zip(images, delays):
+            d.blit(i, (400-(i.get_width()/2), 0))
+            pygame.display.update()
+            pygame.time.delay(j)
+        pygame.mixer.music.load("mus/mus_intronoise.ogg")
+        i = pygame.image.load("sprites/splash.png")
+        i = scale(i, 2.5)
+        d.blit(i, (400-(i.get_width()/2), 300-(i.get_height()/2)))
         pygame.display.update()
-        pygame.time.delay(j)
-    pygame.mixer.music.load("mus/mus_intronoise.ogg")
-    i = pygame.image.load("sprites/splash.png")
-    i = scale(i, 2.5)
-    d.blit(i, (400-(i.get_width()/2), 300-(i.get_height()/2)))
-    pygame.display.update()
-    pygame.mixer.music.play()
-    pygame.time.wait(5000)
+        pygame.mixer.music.play()
+        pygame.time.wait(5000)
+    elif type == 1: # hijacked by Flowey EX
+        pygame.mixer.music.load("mus/mus_story_91.ogg")
+        images = []
+        for i in ["_0", "2_0"]:
+            images += [scale(pygame.image.load("sprites/spr_fakeintro"+str(i)+".png"), 2.5)]
+        pygame.mixer.music.play()
+        d.blit(images[0], (400-(images[0].get_width()/2), 0))
+        pygame.display.update()
+        pygame.time.delay(6000)
+        pygame.time.delay(2000)
+        pygame.mixer.music.load("mus/mus_story_stuck.ogg")
+        pygame.mixer.music.play(-1)
+        d.blit(images[1], (400-(images[1].get_width()/2), 0))
+        pygame.display.update()
+        pygame.time.wait(5000)
 
-
-intro()
+intro(0)
 invoke_dog("Not implemented.")
