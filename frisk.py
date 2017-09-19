@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import item
 
 class Frisk:
     def __init__(self):
@@ -10,6 +11,13 @@ class Frisk:
         self.at = 10
         self.df = 10
         self.room = 0
+        self.weapon = item.Stick()
+        self.armor = item.Bandage()
+        self.inventory = []
+        self.dimensionalboxa = [item.ToughGlove()]
+        self.dimensionalboxb = []
+        self.have_phone = False
+        self.phoneslots = []
         self.stats = [(1, 20, 10, 10, 0),
                       (2, 24, 12, 10, 10),
                       (3, 28, 14, 10, 30),
@@ -30,6 +38,7 @@ class Frisk:
                       (18, 88, 44, 14, 25000),
                       (19, 92, 46, 14, 50000),
                       (20, 99, 48, 14, 99999)]
+
     def exp_incr(self, exp):
         self.exp += exp
         prevlv = self.lv
@@ -41,3 +50,9 @@ class Frisk:
                 self.df = i[3]
         return !(self.lv == prevlv)
 
+    def heal(self, hp):
+        self.hp += hp
+        if self.hp > self.maxhp:
+            self.hp = self.maxhp
+            return 1
+        return 0
