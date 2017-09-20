@@ -74,3 +74,98 @@ class CroquetRoll(Item):
     def drop(self, chara):
         chara.inventory.remove(self)
         return None
+
+class RockCandy(Item):
+    def __init__(self):
+        self.id = 5
+        self.sell0 = 3
+        self.sell1 = 4
+        self.sell2 = 6
+        self.name = "Rock Candy"
+        self.shortname = "RockCandy"
+        self.seriousname = "RockCandy"
+    def check(self):
+        return [s(2653), s(2654)]
+    def use(self, chara):
+        chara.heal(1)
+        chara.inventory.remove(self)
+        return [s(2739)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
+
+class PumpkinRings(Item):
+    def __init__(self):
+        self.id = 6
+        self.sell0 = 3
+        self.sell1 = 4
+        self.sell2 = 6
+        self.name = "Pumpkin Rings"
+        self.shortname = "PunkRings"
+        self.seriousname = "PmknRings"
+    def check(self):
+        return [s(2655)]
+    def use(self, chara):
+        chara.heal(8)
+        chara.inventory.remove(self)
+        return [s(2740)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
+
+class StoicOnion(Item):
+    def __init__(self):
+        self.id = 8
+        self.sell0 = 10
+        self.sell1 = 11
+        self.sell2 = 15
+        self.name = "StoicOnion"
+        self.shortname = "StocOnion"
+        self.seriousname = "Onion"
+    def check(self):
+        return [s(2657)]
+    def use(self, chara):
+        chara.heal(5)
+        chara.inventory.remove(self)
+        return [s(2743)+s(2744)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
+
+class GhostFruit(Item):
+    def __init__(self):
+        self.id = 9
+        self.sell0 = 10
+        self.sell1 = 11
+        self.sell2 = 15
+        self.name = "Ghost Fruit"
+        self.shortname = "GhostFrut"
+        self.seriousname = "GhstFruit"
+    def check(self):
+        return [s(2658)]
+    def use(self, chara):
+        chara.heal(16)
+        chara.inventory.remove(self)
+        return [s(2745)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
+
+class PuppydoughIcecream(Item):
+    def __init__(self):
+        self.id = 18
+        self.sell0 = 2
+        self.sell1 = 3
+        self.sell2 = 5
+        self.name = "Puppydough Icecream"
+        self.shortname = "PDIceCream"
+        self.seriousname = "Ice Cream"
+    def check(self):
+        return [s(2667)]
+    def use(self, chara):
+        chara.heal(28)
+        chara.inventory.remove(self)
+        return [s(2775)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
