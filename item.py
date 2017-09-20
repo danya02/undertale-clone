@@ -75,6 +75,44 @@ class CroquetRoll(Item):
         chara.inventory.remove(self)
         return None
 
+class Stick(Item):
+    def __init__(self):
+        self.id = 3
+        self.sell0 = 150
+        self.sell1 = 151
+        self.sell2 = 190
+        self.name = "Stick"
+        self.shortname = "Stick"
+        self.seriousname = "Stick"
+    def check(self):
+        return [s(2651)]
+    def use(self, chara):
+        chara.heal(10)
+        chara.inventory.remove(self)
+        return [s(2736)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
+
+class Bandage(Item):
+    def __init__(self):
+        self.id = 4
+        self.sell0 = 150
+        self.sell1 = 151
+        self.sell2 = 190
+        self.name = "Bandage"
+        self.shortname = "Bandage"
+        self.seriousname = "Bandage"
+    def check(self):
+        return [s(2652)]
+    def use(self, chara):
+        chara.heal(10)
+        chara.inventory.remove(self)
+        return [s(2737)+s(2738)]
+    def drop(self, chara):
+        chara.inventory.remove(self)
+        return None
+
 class RockCandy(Item):
     def __init__(self):
         self.id = 5
