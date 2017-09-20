@@ -19,7 +19,9 @@ class Item:
     def use(self, chara):
         pass
     def drop(self, chara):
-        pass
+        chara.inventory.remove(self)
+        msgtype = random.randint(0, 4)
+        return [[s(52), s(56), s(58), s(60), s(61)][msgtype]+self.name+[s(55), s(57), s(59), s(55), s(62)][msgtype]]
 
 class None(Item):
     def __init__(self):
@@ -52,9 +54,6 @@ class MonsterCandy(Item):
         chara.heal(10)
         chara.inventory.remove(self)
         return [s(2721), s(random.choice([2723, 2724])]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class CroquetRoll(Item):
     def __init__(self):
@@ -71,9 +70,6 @@ class CroquetRoll(Item):
         chara.heal(10)
         chara.inventory.remove(self)
         return [s(random.choice([2725, 2726])]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class Stick(Item):
     def __init__(self):
@@ -90,9 +86,6 @@ class Stick(Item):
         chara.heal(10)
         chara.inventory.remove(self)
         return [s(2736)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class Bandage(Item):
     def __init__(self):
@@ -109,9 +102,6 @@ class Bandage(Item):
         chara.heal(10)
         chara.inventory.remove(self)
         return [s(2737)+s(2738)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class RockCandy(Item):
     def __init__(self):
@@ -128,9 +118,6 @@ class RockCandy(Item):
         chara.heal(1)
         chara.inventory.remove(self)
         return [s(2739)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class PumpkinRings(Item):
     def __init__(self):
@@ -147,9 +134,6 @@ class PumpkinRings(Item):
         chara.heal(8)
         chara.inventory.remove(self)
         return [s(2740)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class StoicOnion(Item):
     def __init__(self):
@@ -166,9 +150,6 @@ class StoicOnion(Item):
         chara.heal(5)
         chara.inventory.remove(self)
         return [s(2743)+s(2744)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class GhostFruit(Item):
     def __init__(self):
@@ -185,9 +166,6 @@ class GhostFruit(Item):
         chara.heal(16)
         chara.inventory.remove(self)
         return [s(2745)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
 
 class PuppydoughIcecream(Item):
     def __init__(self):
@@ -204,6 +182,3 @@ class PuppydoughIcecream(Item):
         chara.heal(28)
         chara.inventory.remove(self)
         return [s(2775)]
-    def drop(self, chara):
-        chara.inventory.remove(self)
-        return None
