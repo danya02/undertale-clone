@@ -1,5 +1,7 @@
 import pygame
+from pygame.locals import *
 import gzip
+import frisk
 
 pygame.init()
 d = pygame.display.set_mode((800,600))
@@ -75,4 +77,56 @@ def intro(type=0):
         for i in range(600):
             pygame.time.wait(1000)
 intro(0)
+def init():
+    global chara
+    chara = frisk.Frisk()
+    global running
+    running = True
+
+def spritecycle():
+    global running
+    global chara
+    upcycle = [pygame.image.load("sprites/spr_maincharau_"+str(i)+".png") for i in range(4)]
+    downcycle = [pygame.image.load("sprites/spr_maincharad_"+str(i)+".png") for i in range(4)]
+    leftcycle = [pygame.image.load("sprites/spr_maincharal_"+str(i)+".png") for i in range(2)]
+    rightcycle = [pygame.image.load("sprites/spr_maincharar_"+str(i)+".png") for i in range(2)]
+    while running:
+        chara.sprite = [upcycle,rightcycle,downcycle,leftcycle][chara.dir][0]
+        if chara.moving:
+            for i in [upcycle,rightcycle,downcycle,leftcycle][chara.dir]:
+                if not chara.moving:
+                    break
+                chara.sprite = i
+                pygame.time.wait(250)
+def maincycle():
+    global chara
+    global running
+    while running:
+        #d.blit(background,(0,0))
+        d.blit(chara.sprite, chara.pos)
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if (event.key == K_UP):
+                    chara.dir = 0
+                elif (event.key == K_RIGHT):
+                    chara.dir = 1
+                elif (event.key == K_DOWN):
+                    chara.dir = 2
+                elif (event.key == K_LEFT):
+                    chara.dir = 3
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_LEFT]:
+            chara.pos = (chara.pos[0]-5, chara.pos[1])
+        if keys_pressed[K_RIGHT]:
+            chara.pos = (chara.pos[0]+5, chara.pos[1])
+        if keys_pressed[K_UP]:
+            chara.pos = (chara.pos[0], chara.pos[1]-5)
+        if keys_pressed[K_DOWN]:
+            chara.pos = (chara.pos[0]+5, chara.pos[1]+5)
+        pygame.display.update()
+        if not chara.pos[0] in range(800) or not chara.pos[1] in range(600):
+            raise NotImplementedError
 invoke_dog("Not implemented.")

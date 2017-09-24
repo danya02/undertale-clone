@@ -18,6 +18,10 @@ class Frisk:
         self.dimensionalboxb = []
         self.have_phone = False
         self.phoneslots = []
+        self.pos = (400,300)
+        self.dir = 2
+        self.sprite = None
+        self.moving = False
         self.stats = [(1, 20, 10, 10, 0),
                       (2, 24, 12, 10, 10),
                       (3, 28, 14, 10, 30),
