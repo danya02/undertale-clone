@@ -25,6 +25,14 @@ def invoke_dog(text=""):
     except:
         pass
     while 1:
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if (event.key == K_ESCAPE):
+                    pygame.quit()
+                    sys.exit()
         d.fill(pygame.Color(0,0,0,255))
         d.blit(s1, (400 - int(s1.get_width()/2), 300 - int(s1.get_height()/2)))
         d.blit(text, (400 - int(text.get_width()/2), 450))
