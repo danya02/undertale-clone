@@ -1,0 +1,41 @@
+0x000000:
+    self.legl = 0s
+    self.legr = 0s
+    self.arml = 0s
+    self.armr = 0s
+    self.leglh = 0s
+    self.legrh = 0s
+    self.xoffr = 0s
+    self.yoffl = 0s
+    self.xoffr = 0s
+    self.yoffl = 0s
+    self.siner = 0s
+    self.lsin = 0s
+    self.rsin = 0s
+    self.faceno = 0s
+    self.side = 0s
+    self.prevside = 0s
+    self.hurt = 2s
+    self.hurtface = 0s
+    self.myalpha = 1s
+    self.myblend = 16777215
+    self.sineron = 1s
+    self.pause = 0s
+    self.legmode = 0s
+    self.dancewait = 25s
+    stog.alarm[5s] = (* self.dancewait 5s)
+    self.dsf = 0s
+    self.ds = 0s
+    self.fadewhite = 0s
+    self.whiteval = 0s
+    self.bodyopen = 0s
+    self.bodyimg = 0s
+    self.heartdead = 0s
+    self.dance = 1s
+    stog.alarm[6s] = 5s
+    self.noarm = 0s
+    self.noleg = 0s
+    self.endface = 0s
+    self.face_set = 0s
+0x0001E8:
+    exit

@@ -1,0 +1,8 @@
+0x000000:
+    pushenv 1570s 0x000014
+0x000008:
+    self.uncan = 0s
+0x000014:
+    popenv 0x000008
+0x000018:
+    exit

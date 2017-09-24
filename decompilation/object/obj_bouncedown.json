@@ -1,0 +1,1 @@
+{"sprite":"spr_venter_d","visible":true,"solid":false,"depth":500000,"persist":false,"parent":"obj_bounceright","texmask":1058,"sensor":false,"colshape":"circle","data":[],"points":[{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374}]}

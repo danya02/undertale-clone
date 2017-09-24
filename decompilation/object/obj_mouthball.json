@@ -1,0 +1,1 @@
+{"sprite":"spr_mouthball","visible":true,"solid":false,"depth":-60,"persist":false,"parent":"obj_floweybullet_parent","texmask":2239,"sensor":false,"colshape":"circle","data":[],"points":[{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374},{"x":-57005,"y":-49374}]}
