@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
+import sys
 import gzip
+import threading
 import frisk
 
 pygame.init()
@@ -84,7 +86,6 @@ def intro(type=0):
         pygame.mixer.music.play(-1)
         for i in range(600):
             pygame.time.wait(1000)
-intro(0)
 def init():
     global chara
     chara = frisk.Frisk()
@@ -94,10 +95,11 @@ def init():
 def spritecycle():
     global running
     global chara
-    upcycle = [pygame.image.load("sprites/spr_maincharau_"+str(i)+".png") for i in range(4)]
-    downcycle = [pygame.image.load("sprites/spr_maincharad_"+str(i)+".png") for i in range(4)]
-    leftcycle = [pygame.image.load("sprites/spr_maincharal_"+str(i)+".png") for i in range(2)]
-    rightcycle = [pygame.image.load("sprites/spr_maincharar_"+str(i)+".png") for i in range(2)]
+    scale_factor = 2
+    upcycle = [scale(pygame.image.load("sprites/spr_maincharau_"+str(i)+".png"), scale_factor) for i in range(4)]
+    downcycle = [scale(pygame.image.load("sprites/spr_maincharad_"+str(i)+".png"), scale_factor) for i in range(4)]
+    leftcycle = [scale(pygame.image.load("sprites/spr_maincharal_"+str(i)+".png"), scale_factor) for i in range(2)]
+    rightcycle = [scale(pygame.image.load("sprites/spr_maincharar_"+str(i)+".png"), scale_factor) for i in range(2)]
     while running:
         chara.sprite = [upcycle,rightcycle,downcycle,leftcycle][chara.dir][0]
         if chara.moving:
@@ -105,36 +107,53 @@ def spritecycle():
                 if not chara.moving:
                     break
                 chara.sprite = i
-                pygame.time.wait(250)
+                for n in range(20):
+                    if not chara.moving:
+                        break
+                    pygame.time.wait(10)
 def maincycle():
     global chara
     global running
+    sprite_cycle = threading.Thread(target=spritecycle)
+    sprite_cycle.start()
+    pygame.time.wait(250)
     while running:
+        d.fill(pygame.Color(0,0,0,0))
         #d.blit(background,(0,0))
-        d.blit(chara.sprite, chara.pos)
+        d.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
         for event in pygame.event.get():
             if event.type==QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN:
-                if (event.key == K_UP):
-                    chara.dir = 0
-                elif (event.key == K_RIGHT):
-                    chara.dir = 1
-                elif (event.key == K_DOWN):
-                    chara.dir = 2
-                elif (event.key == K_LEFT):
-                    chara.dir = 3
-        keys_pressed = key.get_pressed()
+                if (event.key == K_ESCAPE):
+                    pygame.quit()
+                    sys.exit()
+        keys_pressed = pygame.key.get_pressed()
+        chara.moving = False
         if keys_pressed[K_LEFT]:
-            chara.pos = (chara.pos[0]-5, chara.pos[1])
+            chara.dir = 3
+            chara.moving = True
+            chara.pos = (chara.pos[0]-0.5, chara.pos[1])
         if keys_pressed[K_RIGHT]:
-            chara.pos = (chara.pos[0]+5, chara.pos[1])
+            chara.dir = 1
+            chara.moving = True
+            chara.pos = (chara.pos[0]+0.5, chara.pos[1])
         if keys_pressed[K_UP]:
-            chara.pos = (chara.pos[0], chara.pos[1]-5)
+            chara.dir = 0
+            chara.moving = True
+            chara.pos = (chara.pos[0], chara.pos[1]-0.5)
         if keys_pressed[K_DOWN]:
-            chara.pos = (chara.pos[0]+5, chara.pos[1]+5)
+            chara.dir = 2
+            chara.moving = True
+            chara.pos = (chara.pos[0], chara.pos[1]+0.5)
         pygame.display.update()
-        if not chara.pos[0] in range(800) or not chara.pos[1] in range(600):
-            raise NotImplementedError
-invoke_dog("Not implemented.")
+        if not int(chara.pos[0]) in range(800) or not int(chara.pos[1]) in range(600):
+            raise NotImplementedError("chara left screen area")
+try:
+    init()
+    #intro(0)
+    maincycle()
+except:
+    e = sys.exc_info()
+    invoke_dog(type(e[1]).__name__+": "+str(e[1]))

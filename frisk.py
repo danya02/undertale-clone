@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import item
+#import item
 
 class Frisk:
     def __init__(self):
@@ -11,13 +11,13 @@ class Frisk:
         self.at = 10
         self.df = 10
         self.room = 0
-        self.weapon = item.Stick()
-        self.armor = item.Bandage()
-        self.inventory = []
-        self.dimensionalboxa = [item.ToughGlove()]
-        self.dimensionalboxb = []
-        self.have_phone = False
-        self.phoneslots = []
+#        self.weapon = item.Stick()
+#        self.armor = item.Bandage()
+#        self.inventory = []
+#        self.dimensionalboxa = [item.ToughGlove()]
+#        self.dimensionalboxb = []
+#        self.have_phone = False
+#        self.phoneslots = []
         self.pos = (400,300)
         self.dir = 2
         self.sprite = None
@@ -52,7 +52,7 @@ class Frisk:
                 self.maxhp = i[1]
                 self.at = i[2]
                 self.df = i[3]
-        return !(self.lv == prevlv)
+        return not (self.lv == prevlv)
 
     def heal(self, hp):
         self.hp += hp

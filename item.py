@@ -21,7 +21,7 @@ class Item:
     def drop(self, chara):
         chara.inventory.remove(self)
         msgtype = random.randint(0, 4)
-        return [[s(52), s(56), s(58), s(60), s(61)][msgtype]+self.name+[s(55), s(57), s(59), s(55), s(62)][msgtype]]
+        return [s(52), s(56), s(58), s(60), s(61)][msgtype]+self.name+[s(55), s(57), s(59), s(55), s(62)][msgtype]
 
 class None(Item):
     def __init__(self):
