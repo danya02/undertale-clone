@@ -23,7 +23,7 @@ class Item:
         msgtype = random.randint(0, 4)
         return [s(52), s(56), s(58), s(60), s(61)][msgtype]+self.name+[s(55), s(57), s(59), s(55), s(62)][msgtype]
 
-class None(Item):
+class Null(Item):
     def __init__(self):
         self.id = 0
         self.sell0 = None
@@ -53,7 +53,7 @@ class MonsterCandy(Item):
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
-        return [s(2721), s(random.choice([2723, 2724])]
+        return [s(2721), s(random.choice([2723, 2724]))]
 
 class CroquetRoll(Item):
     def __init__(self):
@@ -69,7 +69,7 @@ class CroquetRoll(Item):
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
-        return [s(random.choice([2725, 2726])]
+        return [s(random.choice([2725, 2726]))]
 
 class Stick(Item):
     def __init__(self):
