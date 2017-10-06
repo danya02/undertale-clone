@@ -83,8 +83,6 @@ class Stick(Item):
     def check(self):
         return [s(2651)]
     def use(self, chara):
-        chara.heal(10)
-        chara.inventory.remove(self)
         return [s(2736)]
 
 class Bandage(Item):
