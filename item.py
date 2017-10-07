@@ -165,6 +165,20 @@ class GhostFruit(Item):
         chara.inventory.remove(self)
         return [s(2745)]
 
+class ToughGlove(Item):
+    def __init__(self):
+        self.id = 14
+        self.sell0 = 50
+        self.sell1 = 51
+        self.sell2 = 65
+        self.name = "Tough Glove"
+        self.shortname = "TuffGlove"
+        self.seriousname = "Glove"
+    def check(self):
+        return [s(2663)]
+    def use(self, chara):
+        raise NotImplementedError("weapons not supported yet")
+
 class PuppydoughIcecream(Item):
     def __init__(self):
         self.id = 18
