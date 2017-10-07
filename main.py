@@ -11,13 +11,17 @@ d = pygame.display.set_mode((800,600))
 def scale(img, times):
     return pygame.transform.scale(img, (int(img.get_width()*times), int(img.get_height()*times)))
 
-def invoke_dog(text=""):
+def invoke_dog(text="", type=0):
     s1 = pygame.image.fromstring(gzip.decompress(b'\x1f\x8b\x08\x00\xd8\xb8\xbbY\x02\xffc`\xa0\x14\xfc\xff\xff\x1fB\xc2\x01\\\x90\x18\xbdX\x01%z\tjGv$V\xc7\x93g).\x13\xe0"h\n\x881\x01Y1ZP\x13\xe3\x184\xff\x92\xe1\x8b\xffd\x81\x11\xa5\x97\xd4\x80\xc5\xaf\x17\x7f\x94\xe1\x91\xc5\xaa\x12\xab^\x82y\x19\xbf\x08\xe5\x00\x00W\x07lAt\x04\x00\x00'), (20, 19), 'RGB')
     s2 = pygame.image.fromstring(gzip.decompress(b'\x1f\x8b\x08\x00\x85\xb9\xbbY\x02\xffc`\xa0\x0e\xf8\xff\xff?\x84\x84\x03\xb8 \xf1&`\x05\x94\x9b@\xa4!\xc8\xce\xc6\xea\x1dJ\x1c@\xa49h\xca\xc80\x079\xe4\xb1z\x84\xa0\x99\x98\xe6\x93\xea\xaf\xffd\x81Q\x13\xb0F+\xb5L\xc0\x1f\xb9\xb8d\xb1\xaa\xc1\x9a\xe4\x08\x9a@RIB]\x00\x00h\x1d1\xcc\xe6\x04\x00\x00'), (22, 19), 'RGB')
     s1 = scale(s1, 4)
     s2 = scale(s2, 4)
+    s3 = pygame.image.fromstring(gzip.decompress(b'\x1f\x8b\x08\x00\xe1!\xd9Y\x02\xffc`\x18\x05\x03\t\xfec\x00\xaa\x18\x82\x07\xd0\xc2L"\rGS\x89\xc6 \xdbd\xac\xc6\x12i2yQC\xd0\n"\xcd\x84\x88 \x93\xc8\xdai\x11\x08d$9\xac\xea\xf1\x84\t\x19\xe1\x80\'vp\x89\xd0:c\x02\x00\x85\xf4\xb8\xa3\x19\x05\x00\x00'), (29,15), "RGB")
+    s4 = pygame.image.fromstring(gzip.decompress(b"\x1f\x8b\x08\x00\xe7!\xd9Y\x02\xffc`\x18\x05C\x1e\xfc'\x1a\xd0\xc2L\xe2\xcdGS\x89\xc6 \xdbd\xac\xc6\x12i2I!@\xd0F\x82\xc6b*C#\xd1L\xa0E \xe02\x16\x97\xf9X}G0X\xf0\xbb\x99\xa4\x14E^\x02\xa6\x10\x00\x00K\\\xfb\xa9\x19\x05\x00\x00"), (29,15), "RGB")
+    s3 = scale(s3, 4)
+    s4 = scale(s4, 4)
     try:
-        pygame.mixer.music.load("mus/mus_dance_of_dog.ogg")
+        pygame.mixer.music.load(["mus/mus_dance_of_dog.ogg", "mus/mus_sigh_of_dog.ogg"][type])
     except:
         pass
     font = pygame.font.Font("fonts/determinationmono.ttf", 32)
@@ -36,15 +40,15 @@ def invoke_dog(text=""):
                     pygame.quit()
                     sys.exit()
         d.fill(pygame.Color(0,0,0,255))
-        d.blit(s1, (400 - int(s1.get_width()/2), 300 - int(s1.get_height()/2)))
+        d.blit([s1,s3][type], (400 - int([s1,s3][type].get_width()/2), 300 - int([s1,s3][type].get_height()/2)))
         d.blit(text, (400 - int(text.get_width()/2), 450))
         pygame.display.update()
-        pygame.time.wait(250)
+        pygame.time.wait([250,500][type])
         d.fill(pygame.Color(0,0,0,255))
-        d.blit(s2, (400 - int(s1.get_width()/2), 300 - int(s1.get_height()/2)))
+        d.blit([s2,s4][type], (400 - int([s1,s3][type].get_width()/2), 300 - int([s1,s3][type].get_height()/2)))
         d.blit(text, (400 - int(text.get_width()/2), 450))
         pygame.display.update()
-        pygame.time.wait(250)
+        pygame.time.wait([250,500][type])
 
 def intro(type=0):
     if type == 0: # normal intro
@@ -149,11 +153,16 @@ def maincycle():
             chara.pos = (chara.pos[0], chara.pos[1]+0.5)
         pygame.display.update()
         if not int(chara.pos[0]) in range(800) or not int(chara.pos[1]) in range(600):
-            raise NotImplementedError("chara left screen area")
+            raise NotImplementedError("chara left screen area", 1)
 try:
     init()
     #intro(0)
     maincycle()
 except:
     e = sys.exc_info()
-    invoke_dog(type(e[1]).__name__+": "+str(e[1]))
+    try:
+        invoke_dog(type(e[1]).__name__+": "+str(eval(str(e[1]))[0]), int(eval(str(e[1]))[1]))
+    except SystemExit:
+        sys.exit()
+    except:
+        invoke_dog(type(e[1]).__name__+": "+str(e[1]))
