@@ -97,7 +97,6 @@ def init():
     running = True
 
 def spritecycle():
-    global running
     global chara
     scale_factor = 2
     upcycle = [scale(pygame.image.load("sprites/spr_maincharau_"+str(i)+".png"), scale_factor) for i in range(4)]
@@ -117,7 +116,6 @@ def spritecycle():
                     pygame.time.wait(10)
 def maincycle():
     global chara
-    global running
     sprite_cycle = threading.Thread(target=spritecycle)
     sprite_cycle.start()
     pygame.time.wait(250)
@@ -166,3 +164,5 @@ except:
         sys.exit()
     except:
         invoke_dog(type(e[1]).__name__+": "+str(e[1]))
+finally:
+    run = False
