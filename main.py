@@ -13,6 +13,8 @@ global chara
 chara = None
 global running
 running = True
+global room
+room = None
 
 
 def scale(img, times):
@@ -87,6 +89,7 @@ def invoke_dog(text="", type=0):
 
 try:
     import frisk
+    import rooms
 except ImportError as e:
     invoke_dog("ImportError: "+str(e))
 
@@ -141,6 +144,8 @@ def init():
     chara = frisk.Frisk()
     global running
     running = True
+    global room
+    room = rooms.Room_TEST1()
 
 
 def spritecycle():
@@ -169,7 +174,7 @@ def maincycle():
     pygame.time.wait(250)
     while running:
         d.fill(pygame.Color(0, 0, 0, 0))
-        # d.blit(background,(0,0))
+        room.draw()
         d.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
         for event in pygame.event.get():
             if event.type == QUIT:

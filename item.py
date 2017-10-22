@@ -3,9 +3,13 @@ import strings
 import os
 import random
 
-s = lambda l: strings.get_string(l) # shorthand for lines.
+s = lambda l: strings.get_string(l)  # shorthand for lines.
+
 
 class Item:
+    def __int__(self):
+        return int(self.id)
+
     def __init__(self):
         self.id = None
         self.sell0 = None
@@ -14,14 +18,18 @@ class Item:
         self.name = None
         self.shortname = None
         self.seriousname = None
+
     def check(self):
         pass
+
     def use(self, chara):
         pass
+
     def drop(self, chara):
         chara.inventory.remove(self)
         msgtype = random.randint(0, 4)
-        return [s(52), s(56), s(58), s(60), s(61)][msgtype]+self.name+[s(55), s(57), s(59), s(55), s(62)][msgtype]
+        return [s(52), s(56), s(58), s(60), s(61)][msgtype] + self.name + [s(55), s(57), s(59), s(55), s(62)][msgtype]
+
 
 class Null(Item):
     def __init__(self):
@@ -32,12 +40,16 @@ class Null(Item):
         self.name = ""
         self.shortname = ""
         self.seriousname = ""
+
     def check(self):
         return [s(2648)]
+
     def use(self, chara):
         os.abort()
+
     def drop(self, chara):
         os.abort()
+
 
 class MonsterCandy(Item):
     def __init__(self):
@@ -48,12 +60,15 @@ class MonsterCandy(Item):
         self.name = "Monster Candy"
         self.shortname = "MnstrCndy"
         self.seriousname = "MnstrCndy"
+
     def check(self):
         return [s(2649)]
+
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
         return [s(2721), s(random.choice([2723, 2724]))]
+
 
 class CroquetRoll(Item):
     def __init__(self):
@@ -64,12 +79,15 @@ class CroquetRoll(Item):
         self.name = "Croquet Roll"
         self.shortname = "CroqtRoll"
         self.seriousname = "CroqtRoll"
+
     def check(self):
         return [s(2650)]
+
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
         return [s(random.choice([2725, 2726]))]
+
 
 class Stick(Item):
     def __init__(self):
@@ -80,10 +98,13 @@ class Stick(Item):
         self.name = "Stick"
         self.shortname = "Stick"
         self.seriousname = "Stick"
+
     def check(self):
         return [s(2651)]
+
     def use(self, chara):
         return [s(2736)]
+
 
 class Bandage(Item):
     def __init__(self):
@@ -94,12 +115,15 @@ class Bandage(Item):
         self.name = "Bandage"
         self.shortname = "Bandage"
         self.seriousname = "Bandage"
+
     def check(self):
         return [s(2652)]
+
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
-        return [s(2737)+s(2738)]
+        return [s(2737) + s(2738)]
+
 
 class RockCandy(Item):
     def __init__(self):
@@ -110,12 +134,15 @@ class RockCandy(Item):
         self.name = "Rock Candy"
         self.shortname = "RockCandy"
         self.seriousname = "RockCandy"
+
     def check(self):
         return [s(2653), s(2654)]
+
     def use(self, chara):
         chara.heal(1)
         chara.inventory.remove(self)
         return [s(2739)]
+
 
 class PumpkinRings(Item):
     def __init__(self):
@@ -126,12 +153,15 @@ class PumpkinRings(Item):
         self.name = "Pumpkin Rings"
         self.shortname = "PunkRings"
         self.seriousname = "PmknRings"
+
     def check(self):
         return [s(2655)]
+
     def use(self, chara):
         chara.heal(8)
         chara.inventory.remove(self)
         return [s(2740)]
+
 
 class StoicOnion(Item):
     def __init__(self):
@@ -142,12 +172,15 @@ class StoicOnion(Item):
         self.name = "StoicOnion"
         self.shortname = "StocOnion"
         self.seriousname = "Onion"
+
     def check(self):
         return [s(2657)]
+
     def use(self, chara):
         chara.heal(5)
         chara.inventory.remove(self)
-        return [s(2743)+s(2744)]
+        return [s(2743) + s(2744)]
+
 
 class GhostFruit(Item):
     def __init__(self):
@@ -158,12 +191,15 @@ class GhostFruit(Item):
         self.name = "Ghost Fruit"
         self.shortname = "GhostFrut"
         self.seriousname = "GhstFruit"
+
     def check(self):
         return [s(2658)]
+
     def use(self, chara):
         chara.heal(16)
         chara.inventory.remove(self)
         return [s(2745)]
+
 
 class ToughGlove(Item):
     def __init__(self):
@@ -174,10 +210,13 @@ class ToughGlove(Item):
         self.name = "Tough Glove"
         self.shortname = "TuffGlove"
         self.seriousname = "Glove"
+
     def check(self):
         return [s(2663)]
+
     def use(self, chara):
         raise NotImplementedError("weapons not supported yet")
+
 
 class PuppydoughIcecream(Item):
     def __init__(self):
@@ -188,8 +227,10 @@ class PuppydoughIcecream(Item):
         self.name = "Puppydough Icecream"
         self.shortname = "PDIceCream"
         self.seriousname = "Ice Cream"
+
     def check(self):
         return [s(2667)]
+
     def use(self, chara):
         chara.heal(28)
         chara.inventory.remove(self)

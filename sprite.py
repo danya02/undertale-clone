@@ -6,6 +6,10 @@ import threading
 SPRITE_DIR = "./sprites/"
 
 
+def scale(img, times):
+    return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
+
+
 class StaticSprite:
     def __setattr__(self, attr, value):
         object.__setattr__(self, attr, value)
@@ -17,8 +21,9 @@ class StaticSprite:
         elif attr == 'y':
             object.__setattr__(self, 'pos', [pos[0], value])
 
-    def __init__(self, sprite=None, pos=(0, 0)):
+    def __init__(self, sprite=None, pos=(0, 0), scale_value=1):
         self.sprite = pygame.Surface((0, 0)) if not isinstance(sprite, pygame.Surface) else sprite
+        self.sprite = scale(self.sprite, scale_value)
         self.pos = list(pos)
         self._display = pygame.display.get_surface()
 
@@ -39,8 +44,9 @@ class DynamicSprite:
         elif attr == 'y':
             object.__setattr__(self, 'pos', [pos[0], value])
 
-    def __init__(self, frames=None, pos=(0, 0), delay=100):
+    def __init__(self, frames=None, pos=(0, 0), delay=100, scale_value=1):
         self.frames = [pygame.Surface((0, 0))] if not isinstance(frames, list) else frames
+        self.frames = [scale(i, scale_value) for i in self.frames]
         self.pos = list(pos)
         self.stage = 0
         self.delay = delay
@@ -58,14 +64,14 @@ class DynamicSprite:
             pygame.display.flip()
 
 
-def get_sprite(name):
-    return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"))
+def get_sprite(name, scale_value=1):
+    return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"), scale_value=scale_value)
 
 
-def get_dynamic_sprite(name):
+def get_dynamic_sprite(name, scale_value=1):
     sprite_list = []
     for i in os.listdir(SPRITE_DIR):
-        if name+"_" in i and ".png" in i:
-            sprite_list.append(SPRITE_DIR+i)
+        if name + "_" in i and ".png" in i:
+            sprite_list.append(SPRITE_DIR + i)
     sprite_list.sort()
-    return DynamicSprite([pygame.image.load(i) for i in sprite_list])
+    return DynamicSprite([pygame.image.load(i) for i in sprite_list], scale_value=scale_value)
