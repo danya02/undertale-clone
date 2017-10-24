@@ -184,6 +184,8 @@ def maincycle():
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                if event.key == pygame.K_RETURN or event.key == pygame.K_z:
+                    print('FOO')
         keys_pressed = pygame.key.get_pressed()
         chara.moving = False
         if keys_pressed[K_LEFT]:
@@ -218,7 +220,7 @@ if __name__ == "__main__":
             invoke_dog(type(e[1]).__name__ + ": " + str(eval(str(e[1]))[0]), int(eval(str(e[1]))[1]))
         except SystemExit:
             sys.exit()
-        except:
+        except ValueError:
             invoke_dog(type(e[1]).__name__ + ": " + str(e[1]))
     finally:
         run = False
