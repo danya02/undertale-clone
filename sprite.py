@@ -17,9 +17,9 @@ class StaticSprite:
             object.__setattr__(self, 'x', value[0])
             object.__setattr__(self, 'y', value[1])
         elif attr == 'x':
-            object.__setattr__(self, 'pos', [value, pos[1]])
+            object.__setattr__(self, 'pos', [value, self.pos[1]])
         elif attr == 'y':
-            object.__setattr__(self, 'pos', [pos[0], value])
+            object.__setattr__(self, 'pos', [self.pos[0], value])
 
     def __init__(self, sprite=None, pos=(0, 0), scale_value=1):
         self.sprite = pygame.Surface((0, 0)) if not isinstance(sprite, pygame.Surface) else sprite
@@ -40,9 +40,9 @@ class DynamicSprite:
             object.__setattr__(self, 'x', value[0])
             object.__setattr__(self, 'y', value[1])
         elif attr == 'x':
-            object.__setattr__(self, 'pos', [value, pos[1]])
+            object.__setattr__(self, 'pos', [value, self.pos[1]])
         elif attr == 'y':
-            object.__setattr__(self, 'pos', [pos[0], value])
+            object.__setattr__(self, 'pos', [self.pos[0], value])
 
     def __init__(self, frames=None, pos=(0, 0), delay=100, scale_value=1):
         self.frames = [pygame.Surface((0, 0))] if not isinstance(frames, list) else frames
