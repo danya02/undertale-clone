@@ -51,9 +51,28 @@ class DynamicSprite:
         self.stage = 0
         self.delay = delay
         self._display = pygame.display.get_surface()
+        self.run = False
 
     def reset(self):
         self.stage = 0
+
+    def start(self):
+        self.run = True
+        self.__thread__ = threading.Thread(target=self.loop, daemon=True)
+        self.__thread__.start()
+
+    def stop(self):
+        self.run = False
+        del self.__thread__
+
+    def loop(self):
+        while self.run:
+            self.sprite = self.frames[self.stage]
+            self.stage += 1
+            if self.stage + 1 > len(self.frames):
+                self.stage = 0
+            pygame.time.delay(self.delay)
+        self.reset()
 
     def draw(self, update=False):
         self._display.blit(self.sprite, self.pos)
