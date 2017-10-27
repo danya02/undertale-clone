@@ -20,4 +20,4 @@ class Room:
 class Room_TEST1(Room):
     def __init__(self):
         super().__init__(self)
-        self.objects = [objects.RaiseException()]
+        self.objects = [objects.RaiseException(), objects.TestSAVEPoint()]

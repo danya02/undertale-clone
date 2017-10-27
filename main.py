@@ -3,12 +3,15 @@ from pygame.locals import *
 import sys
 import gzip
 import threading
+import math
 
 # our modules are imported below the invoke_dog function
 
 pygame.init()
 d = pygame.display.set_mode((800, 600))
 
+global clock
+clock = None
 global chara
 chara = None
 global running
@@ -27,6 +30,7 @@ def invoke_dog(text="", type=0):
     Use this as a fatal error handler, or if the SAVE file is FUBAR.
     Supposed to work under as few assumptions as possible.
     """
+    pygame.init()
     s1 = pygame.image.fromstring(gzip.decompress(
         b'\x1f\x8b\x08\x00\xd8\xb8\xbbY\x02\xffc`\xa0\x14\xfc\xff\xff\x1fB\xc2\x01\\\x90\x18\xbdX\x01%z\tjGv$V\xc7'
         b'\x93g).\x13\xe0"h\n\x881\x01Y1ZP\x13\xe3\x184\xff\x92\xe1\x8b\xffd\x81\x11\xa5\x97\xd4\x80\xc5\xaf\x17\x7f'
@@ -57,41 +61,53 @@ def invoke_dog(text="", type=0):
         pygame.mixer.music.load(["mus/mus_dance_of_dog.ogg", "mus/mus_sigh_of_dog.ogg"][type])
     except pygame.error:
         pass
-    try:
-        font = pygame.font.Font("fonts/determinationmono.ttf", 32)
-    except OSError:
-        font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
-    text = font.render(text, 0, pygame.Color(255, 255, 255, 255))
+    length = 1000
+    height = 33
+    while not length < 600:
+        height -= 1
+        try:
+            font = pygame.font.Font("fonts/determinationmono.ttf", height)
+        except OSError:
+            font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
+        textobj = font.render(text, 0, pygame.Color(255, 255, 255, 255))
+        length = textobj.get_width()
+
     try:
         pygame.mixer.music.play(-1)
     except pygame.error:
         pass
-    while 1:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
+    try:
+        while 1:
+            for event in pygame.event.get():
+                if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-        d.fill(pygame.Color(0, 0, 0, 255))
-        d.blit([s1, s3][type], (400 - int([s1, s3][type].get_width() / 2), 300 - int([s1, s3][type].get_height() / 2)))
-        d.blit(text, (400 - int(text.get_width() / 2), 450))
-        pygame.display.update()
-        pygame.time.wait([250, 500][type])
-        d.fill(pygame.Color(0, 0, 0, 255))
-        d.blit([s2, s4][type], (400 - int([s1, s3][type].get_width() / 2), 300 - int([s1, s3][type].get_height() / 2)))
-        d.blit(text, (400 - int(text.get_width() / 2), 450))
-        pygame.display.update()
-        pygame.time.wait([250, 500][type])
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+            d.fill(pygame.Color(0, 0, 0, 255))
+            d.blit([s1, s3][type],
+                   (400 - int([s1, s3][type].get_width() / 2), 300 - int([s1, s3][type].get_height() / 2)))
+            d.blit(textobj, (400 - int(textobj.get_width() / 2), 450))
+            pygame.display.update()
+            pygame.time.wait([250, 500][type])
+            d.fill(pygame.Color(0, 0, 0, 255))
+            d.blit([s2, s4][type],
+                   (400 - int([s1, s3][type].get_width() / 2), 300 - int([s1, s3][type].get_height() / 2)))
+            d.blit(textobj, (400 - int(textobj.get_width() / 2), 450))
+            pygame.display.update()
+            pygame.time.wait([250, 500][type])
+    except pygame.error:
+        pygame.quit()
+        sys.exit()
 
 
 try:
     import frisk
     import rooms
 except ImportError as e:
-    invoke_dog("ImportError: "+str(e))
+    invoke_dog("ImportError: " + str(e))
 
 
 def intro(version=0):
@@ -140,6 +156,8 @@ def intro(version=0):
 
 
 def init():
+    global clock
+    clock = pygame.time.Clock()
     global chara
     chara = frisk.Frisk()
     global running
@@ -154,7 +172,8 @@ def spritecycle():
     upcycle = [scale(pygame.image.load("sprites/spr_maincharau_" + str(i) + ".png"), scale_factor) for i in range(4)]
     down_cycle = [scale(pygame.image.load("sprites/spr_maincharad_" + str(i) + ".png"), scale_factor) for i in range(4)]
     left_cycle = [scale(pygame.image.load("sprites/spr_maincharal_" + str(i) + ".png"), scale_factor) for i in range(2)]
-    right_cycle = [scale(pygame.image.load("sprites/spr_maincharar_" + str(i) + ".png"), scale_factor) for i in range(2)]
+    right_cycle = [scale(pygame.image.load("sprites/spr_maincharar_" + str(i) + ".png"), scale_factor) for i in
+                   range(2)]
     while running:
         chara.sprite = [upcycle, right_cycle, down_cycle, left_cycle][chara.dir][0]
         if chara.moving:
@@ -162,10 +181,11 @@ def spritecycle():
                 if not chara.moving:
                     break
                 chara.sprite = i
-                for n in range(20):
+                for n in range(10):
                     if not chara.moving:
                         break
-                    pygame.time.wait(10)
+                    clock.tick(30)
+
 
 def maincycle():
     global chara
@@ -185,7 +205,15 @@ def maincycle():
                     pygame.quit()
                     sys.exit()
                 if event.key == pygame.K_RETURN or event.key == pygame.K_z:
-                    print('FOO')
+                    found = False
+                    for i in room.objects:
+                        if int(math.fabs(i.x - chara.x) * 2) + int(math.fabs(
+                                        i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
+                            found = True
+                            break
+                    if found:
+                        i.interact(chara)
+                    del found
         keys_pressed = pygame.key.get_pressed()
         chara.moving = False
         if keys_pressed[K_LEFT]:
@@ -222,5 +250,8 @@ if __name__ == "__main__":
             sys.exit()
         except ValueError:
             invoke_dog(type(e[1]).__name__ + ": " + str(e[1]))
+        except SyntaxError:
+            invoke_dog(type(e[1]).__name__ + ": " + str(e[1]))
+
     finally:
-        run = False
+        running = False
