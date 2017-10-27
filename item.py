@@ -1,9 +1,6 @@
 #!/usr/bin/python3
-import strings
 import os
 import random
-
-s = lambda l: strings.get_string(l)  # shorthand for lines.
 
 
 class Item:
@@ -27,12 +24,29 @@ class Item:
 
     def drop(self, chara):
         chara.inventory.remove(self)
-        msgtype = random.randint(0, 4)
-        return [s(52), s(56), s(58), s(60), s(61)][msgtype] + self.name + [s(55), s(57), s(59), s(55), s(62)][msgtype]
+        msgtype = random.randint(0, 100)
+        msg = '* The ' + self.name + ' was&  thrown away.'
+        msg = '* You put the ' + self.name + '&  on the ground and gave it a&  little pat.' if msgtype > 40 else msg
+        msg = '* You threw the ' + self.name + '&  on the ground like the piece&  of trash it is.' if msgtype > 60 else msg
+        msg = '* You abandoned the &  ' + self.name + '.' if msgtype > 80 else msg
+        return [msg]
+
+
+class Weapon(Item):
+    def __init__(self):
+        super().__init__()
+        self.strength = 0
+
+
+class Armor(Item):
+    def __init__(self):
+        super().__init__()
+        self.defense = 0
 
 
 class Null(Item):
     def __init__(self):
+        super().__init__()
         self.id = 0
         self.sell0 = None
         self.sell1 = None
@@ -42,7 +56,7 @@ class Null(Item):
         self.seriousname = ""
 
     def check(self):
-        return [s(2648)]
+        return ['* If you are reading this,&  I messed up somehow./%']
 
     def use(self, chara):
         os.abort()
@@ -53,6 +67,7 @@ class Null(Item):
 
 class MonsterCandy(Item):
     def __init__(self):
+        super().__init__()
         self.id = 1
         self.sell0 = 25
         self.sell1 = 26
@@ -62,16 +77,18 @@ class MonsterCandy(Item):
         self.seriousname = "MnstrCndy"
 
     def check(self):
-        return [s(2649)]
+        return ['* "Monster Candy" - Heals 10 HP&* Has a distinct,^1 &  non-licorice flavor./%']
 
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
-        return [s(2721), s(random.choice([2723, 2724]))]
+        return ['* You ate the Monster Candy.' + random.choice(
+            [' &* Very un-licorice-like.', ' &* ... tastes like licorice.'])]
 
 
 class CroquetRoll(Item):
     def __init__(self):
+        super().__init__()
         self.id = 2
         self.sell0 = 10
         self.sell1 = 11
@@ -81,16 +98,17 @@ class CroquetRoll(Item):
         self.seriousname = "CroqtRoll"
 
     def check(self):
-        return [s(2650)]
+        return ['* "Croquet Roll" - Heals 15 HP&* Fried dough traditionally&  served with a mallet./%']
 
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
-        return [s(random.choice([2725, 2726]))]
+        return [random.choice(['* You hit the Croquet Roll into&  your mouth.', '* You ate the Croquet Roll.'])]
 
 
-class Stick(Item):
+class Stick(Weapon):
     def __init__(self):
+        super().__init__()
         self.id = 3
         self.sell0 = 150
         self.sell1 = 151
@@ -100,14 +118,15 @@ class Stick(Item):
         self.seriousname = "Stick"
 
     def check(self):
-        return [s(2651)]
+        return ['* "Stick" - Weapon AT 0&* Its bark is worse than&  its bite./%']
 
     def use(self, chara):
-        return [s(2736)]
+        return ['* You threw the stick away^1.&* Then picked it back up./%']
 
 
-class Bandage(Item):
+class Bandage(Armor):
     def __init__(self):
+        super().__init__()
         self.id = 4
         self.sell0 = 150
         self.sell1 = 151
@@ -117,16 +136,17 @@ class Bandage(Item):
         self.seriousname = "Bandage"
 
     def check(self):
-        return [s(2652)]
+        return ['* "Bandage" - Heals 10 HP&* It has already been used&  several times./%']
 
     def use(self, chara):
         chara.heal(10)
         chara.inventory.remove(self)
-        return [s(2737) + s(2738)]
+        return ['* You re-applied the bandage.' + '&* Still kind of gooey.']
 
 
 class RockCandy(Item):
     def __init__(self):
+        super().__init__()
         self.id = 5
         self.sell0 = 3
         self.sell1 = 4
@@ -136,16 +156,17 @@ class RockCandy(Item):
         self.seriousname = "RockCandy"
 
     def check(self):
-        return [s(2653), s(2654)]
+        return ['* "Rock Candy" - Heals 1 HP&* Here is a recipe to make&  this at home:/', '* 1. Find a rock/%']
 
     def use(self, chara):
         chara.heal(1)
         chara.inventory.remove(self)
-        return [s(2739)]
+        return ['* You ate the Rock Candy.']
 
 
 class PumpkinRings(Item):
     def __init__(self):
+        super().__init__()
         self.id = 6
         self.sell0 = 3
         self.sell1 = 4
@@ -155,16 +176,17 @@ class PumpkinRings(Item):
         self.seriousname = "PmknRings"
 
     def check(self):
-        return [s(2655)]
+        return ['* "Pumpkin Rings" - Heals 8 HP&* A small pumpkin cooked&  like onion rings./%']
 
     def use(self, chara):
         chara.heal(8)
         chara.inventory.remove(self)
-        return [s(2740)]
+        return ['* You ate the Pumpkin Rings.']
 
 
 class StoicOnion(Item):
     def __init__(self):
+        super().__init__()
         self.id = 8
         self.sell0 = 10
         self.sell1 = 11
@@ -174,16 +196,17 @@ class StoicOnion(Item):
         self.seriousname = "Onion"
 
     def check(self):
-        return [s(2657)]
+        return ['* "Stoic Onion" - Heals 5 HP&* Even eating it raw^1, the&  tears just won\'t come./%']
 
     def use(self, chara):
         chara.heal(5)
         chara.inventory.remove(self)
-        return [s(2743) + s(2744)]
+        return ['* You ate the Stoic Onion.' + "&* You didn't cry..."]
 
 
 class GhostFruit(Item):
     def __init__(self):
+        super().__init__()
         self.id = 9
         self.sell0 = 10
         self.sell1 = 11
@@ -193,26 +216,28 @@ class GhostFruit(Item):
         self.seriousname = "GhstFruit"
 
     def check(self):
-        return [s(2658)]
+        return ['* "Ghost Fruit" - Heals 16 HP&* If eaten^1, it will never&  pass to the other side./%']
 
     def use(self, chara):
         chara.heal(16)
         chara.inventory.remove(self)
-        return [s(2745)]
+        return ['* You ate the Ghost Fruit.']
 
 
-class ToughGlove(Item):
+class ToughGlove(Weapon):
     def __init__(self):
+        super().__init__()
         self.id = 14
         self.sell0 = 50
         self.sell1 = 51
         self.sell2 = 65
+        self.strength = 5
         self.name = "Tough Glove"
         self.shortname = "TuffGlove"
         self.seriousname = "Glove"
 
     def check(self):
-        return [s(2663)]
+        return ['* "Tough Glove" - Weapon AT 5&* A worn pink leather glove^1.&* For five-fingered folk./%']
 
     def use(self, chara):
         raise NotImplementedError("weapons not supported yet")
@@ -220,6 +245,7 @@ class ToughGlove(Item):
 
 class PuppydoughIcecream(Item):
     def __init__(self):
+        super().__init__()
         self.id = 18
         self.sell0 = 2
         self.sell1 = 3
@@ -229,9 +255,9 @@ class PuppydoughIcecream(Item):
         self.seriousname = "Ice Cream"
 
     def check(self):
-        return [s(2667)]
+        return ['* "Puppydough Icecream"&* Heals 28 HP^1.&* Made by young pups./%']
 
     def use(self, chara):
         chara.heal(28)
         chara.inventory.remove(self)
-        return [s(2775)]
+        return ['* Mmm^1! Tastes like puppies.']
