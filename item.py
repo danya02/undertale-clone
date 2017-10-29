@@ -8,10 +8,12 @@ class Item:
         return int(self.id)
 
     def __init__(self):
-        self.id = None
-        self.sell0 = None
-        self.sell1 = None
-        self.sell2 = None
+        self.id = 0
+        self.sell0 = 0
+        self.sell1 = 0
+        self.sell2 = 0
+        self.strength = 0
+        self.defense = 0
         self.name = None
         self.shortname = None
         self.seriousname = None
@@ -48,9 +50,6 @@ class Null(Item):
     def __init__(self):
         super().__init__()
         self.id = 0
-        self.sell0 = None
-        self.sell1 = None
-        self.sell2 = None
         self.name = ""
         self.shortname = ""
         self.seriousname = ""
@@ -261,3 +260,7 @@ class PuppydoughIcecream(Item):
         chara.heal(28)
         chara.inventory.remove(self)
         return ['* Mmm^1! Tastes like puppies.']
+
+
+def get_item(item: int):  # TODO: implement this.
+    return Null()

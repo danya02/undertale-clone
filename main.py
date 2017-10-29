@@ -7,9 +7,6 @@ import math
 
 # our modules are imported below the invoke_dog function
 
-pygame.init()
-d = pygame.display.set_mode((800, 600))
-
 global clock
 clock = None
 global chara
@@ -18,6 +15,11 @@ global running
 running = True
 global room
 room = None
+global d
+d = None
+if __name__ == '__main__':
+    pygame.init()
+    d = pygame.display.set_mode((800, 600))
 
 
 def scale(img, times):
@@ -103,13 +105,14 @@ def invoke_dog(text="", kind=0):
         sys.exit()
 
 
-try:
-    import frisk
-    import rooms
-except ImportError as e:
-    frisk = None
-    rooms = None
-    invoke_dog("ImportError: " + str(e))
+if __name__ == "__main__":
+    try:
+        import frisk
+        import rooms
+    except ImportError as e:
+        frisk = None
+        rooms = None
+        invoke_dog("ImportError: " + str(e))
 
 
 def intro(version=0):
@@ -237,11 +240,24 @@ def maincycle():
             raise NotImplementedError("chara left screen area", 1)
 
 
+class UndertaleError(Exception):
+    """
+    Class for fatal errors that bring forth the Dog, but with no text.
+    Use when the SAVE is FUBAR, or when the room is in the Dogcheck.
+    """
+    pass
+
+
 if __name__ == "__main__":
     try:
         init()
         # intro(0)
         maincycle()
+    except UndertaleError as e:
+        try:
+            invoke_dog("", e.args[0])
+        except IndexError:
+            invoke_dog()
     except:
         e = sys.exc_info()
         try:

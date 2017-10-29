@@ -4,7 +4,10 @@ import objects
 
 
 class Room:
+    def __int__(self):
+        return int(self.id)
     def __init__(self, *args):
+        self.id = 0
         self.background = pygame.Surface((800, 600))
         self.bg_pan = (0, 0)
         self.objects = []
@@ -21,3 +24,7 @@ class Room_TEST1(Room):
     def __init__(self):
         super().__init__(self)
         self.objects = [objects.RaiseException(), objects.TestSAVEPoint()]
+
+
+def get_room(room: int):  # TODO: implement this.
+    return Room()
