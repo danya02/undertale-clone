@@ -164,6 +164,8 @@ def init():
     running = True
     global room
     room = rooms.Room_TEST1()
+    pygame.event.set_blocked(
+        [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
 
 
 def spritecycle():
