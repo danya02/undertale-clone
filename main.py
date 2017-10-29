@@ -24,7 +24,7 @@ def scale(img, times):
     return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
 
 
-def invoke_dog(text="", type=0):
+def invoke_dog(text="", kind=0):
     """
     Show the Annoying Dog with optional text until user quits.
     Use this as a fatal error handler, or if the SAVE file is FUBAR.
@@ -58,7 +58,7 @@ def invoke_dog(text="", type=0):
     s3 = scale(s3, 4)
     s4 = scale(s4, 4)
     try:
-        pygame.mixer.music.load(["mus/mus_dance_of_dog.ogg", "mus/mus_sigh_of_dog.ogg"][type])
+        pygame.mixer.music.load(["mus/mus_dance_of_dog.ogg", "mus/mus_sigh_of_dog.ogg"][kind])
     except pygame.error:
         pass
     length = 1000
@@ -69,8 +69,8 @@ def invoke_dog(text="", type=0):
             font = pygame.font.Font("fonts/determinationmono.ttf", height)
         except OSError:
             font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
-        textobj = font.render(text, 0, pygame.Color(255, 255, 255, 255))
-        length = textobj.get_width()
+        text_obj = font.render(text, 0, pygame.Color('white'))
+        length = text_obj.get_width()
 
     try:
         pygame.mixer.music.play(-1)
@@ -86,18 +86,18 @@ def invoke_dog(text="", type=0):
                     if event.key == K_ESCAPE:
                         pygame.quit()
                         sys.exit()
-            d.fill(pygame.Color(0, 0, 0, 255))
-            d.blit([s1, s3][type],
-                   (400 - int([s1, s3][type].get_width() / 2), 300 - int([s1, s3][type].get_height() / 2)))
-            d.blit(textobj, (400 - int(textobj.get_width() / 2), 450))
+            d.fill(pygame.Color('black'))
+            d.blit([s1, s3][kind],
+                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             pygame.display.update()
-            pygame.time.wait([250, 500][type])
-            d.fill(pygame.Color(0, 0, 0, 255))
-            d.blit([s2, s4][type],
-                   (400 - int([s1, s3][type].get_width() / 2), 300 - int([s1, s3][type].get_height() / 2)))
-            d.blit(textobj, (400 - int(textobj.get_width() / 2), 450))
+            pygame.time.wait([250, 500][kind])
+            d.fill(pygame.Color('black'))
+            d.blit([s2, s4][kind],
+                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             pygame.display.update()
-            pygame.time.wait([250, 500][type])
+            pygame.time.wait([250, 500][kind])
     except pygame.error:
         pygame.quit()
         sys.exit()
@@ -107,6 +107,8 @@ try:
     import frisk
     import rooms
 except ImportError as e:
+    frisk = None
+    rooms = None
     invoke_dog("ImportError: " + str(e))
 
 
@@ -195,7 +197,7 @@ def maincycle():
     sprite_cycle.start()
     pygame.time.wait(250)
     while running:
-        d.fill(pygame.Color(0, 0, 0, 0))
+        d.fill(pygame.Color('black'))
         room.draw()
         d.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
         for event in pygame.event.get():
@@ -207,15 +209,11 @@ def maincycle():
                     pygame.quit()
                     sys.exit()
                 if event.key == pygame.K_RETURN or event.key == pygame.K_z:
-                    found = False
                     for i in room.objects:
                         if int(math.fabs(i.x - chara.x) * 2) + int(math.fabs(
                                         i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
-                            found = True
+                            i.interact(chara)
                             break
-                    if found:
-                        i.interact(chara)
-                    del found
         keys_pressed = pygame.key.get_pressed()
         chara.moving = False
         if keys_pressed[K_LEFT]:
