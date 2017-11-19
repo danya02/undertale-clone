@@ -11,7 +11,8 @@ try:
 except pygame.error:
     pass
 
-def get_sound(sound):
+
+def get_sound(sound: int) -> pygame.mixer.Sound:
     """
     Return a Sound with this identifier.
     Sound can be specified by int or a '0x' identifier.

@@ -83,7 +83,7 @@ class Frisk:
                       (19, 92, 46, 14, 50000),
                       (20, 99, 48, 14, 99999)]
 
-    def xp_incr(self, xp):
+    def xp_incr(self, xp: int):
         self.xp += xp
         prevlv = self.lv
         for i in self.stats:
@@ -94,14 +94,14 @@ class Frisk:
                 self.df = i[3]
         return not (self.lv == prevlv)
 
-    def heal(self, hp):
+    def heal(self, hp: int):
         self.hp += hp
         if self.hp > self.maxhp:
             self.hp = self.maxhp
             return 1
         return 0
 
-    def save(self, file=None):
+    def save(self, file: str = None):
         """
         "You're filled with determination..."
         SAVE the non-volatile parameters of this object.
@@ -159,7 +159,7 @@ class Frisk:
         else:
             return '\n'.join(o[1:])
 
-    def load(self, file):
+    def load(self, file: str):
         """
         Load a SAVE file.
         If passed a file-like object, read from it.
@@ -214,7 +214,7 @@ class Frisk:
         except:
             raise main.UndertaleError
 
-    def get_ini_value(self, section, option, type=None):
+    def get_ini_value(self, section: str, option: str, kind=None):
         """
         Return a value contained in the INI file.
         section and option are strings.
@@ -228,16 +228,16 @@ class Frisk:
                 c.read_string(o.read())
         except FileNotFoundError:
             return None
-        if isinstance(type, int):
+        if isinstance(kind, int):
             return c.getint(section, option, fallback=None)
-        elif isinstance(type, float):
+        elif isinstance(kind, float):
             return c.getfloat(section, option, fallback=None)
-        elif isinstance(type, bool):
+        elif isinstance(kind, bool):
             return c.getboolean(section, option, fallback=None)
         else:
             return c.get(section, option, fallback=None)
 
-    def set_ini_value(self, section, option, value):
+    def set_ini_value(self, section: str, option: str, value):
         """
         Set a value in the INI file.
         section and option are strings.

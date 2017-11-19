@@ -6,7 +6,7 @@ import threading
 SPRITE_DIR = "./sprites/"
 
 
-def scale(img, times):
+def scale(img: pygame.Surface, times: float):
     return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
 
 
@@ -21,13 +21,13 @@ class StaticSprite:
         elif attr == 'y':
             object.__setattr__(self, 'pos', [self.pos[0], value])
 
-    def __init__(self, sprite=None, pos=(0, 0), scale_value=1):
+    def __init__(self, sprite: pygame.Surface = None, pos: (int, int) = (0, 0), scale_value: float = 1.0):
         self.sprite = pygame.Surface((0, 0)) if not isinstance(sprite, pygame.Surface) else sprite
         self.sprite = scale(self.sprite, scale_value)
         self.pos = list(pos)
         self._display = pygame.display.get_surface()
 
-    def draw(self, update=False):
+    def draw(self, update: bool = False):
         self._display.blit(self.sprite, self.pos)
         if update:
             pygame.display.flip()
@@ -44,7 +44,8 @@ class DynamicSprite:
         elif attr == 'y':
             object.__setattr__(self, 'pos', [self.pos[0], value])
 
-    def __init__(self, frames=None, pos=(0, 0), delay=100, scale_value=1):
+    def __init__(self, frames: [pygame.Surface] = None, pos: (int, int) = (0, 0), delay: int = 100,
+                 scale_value: float = 1.0):
         self.frames = [pygame.Surface((0, 0))] if not isinstance(frames, list) else frames
         self.frames = [scale(i, scale_value) for i in self.frames]
         self.pos = list(pos)
@@ -74,7 +75,7 @@ class DynamicSprite:
             pygame.time.delay(self.delay)
         self.reset()
 
-    def draw(self, update=False):
+    def draw(self, update: bool = False):
         self._display.blit(self.sprite, self.pos)
         self.stage += 1
         if self.stage + 1 > len(self.frames):
@@ -83,11 +84,11 @@ class DynamicSprite:
             pygame.display.flip()
 
 
-def get_sprite(name, scale_value=1):
+def get_sprite(name: str, scale_value: float = 1.0) -> StaticSprite:
     return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"), scale_value=scale_value)
 
 
-def get_dynamic_sprite(name, scale_value=1):
+def get_dynamic_sprite(name: str, scale_value: float = 1) -> DynamicSprite:
     sprite_list = []
     for i in os.listdir(SPRITE_DIR):
         if name + "_" in i and ".png" in i:
