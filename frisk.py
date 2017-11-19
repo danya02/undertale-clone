@@ -4,6 +4,7 @@ import sprite
 import main
 import item
 import rooms
+import configparser
 
 
 class Frisk:
@@ -51,6 +52,8 @@ class Frisk:
         self.dimensional_box_b = []
         self.phone = []
         self.flags = [0] * 512
+        self.savefile = 'file0'
+        self.inifile = 'undertale.ini'
         self.pos = (400, 300)
         self.x = 400
         self.y = 300
@@ -104,6 +107,7 @@ class Frisk:
         SAVE the non-volatile parameters of this object.
         If passed a writable file, write to that file.
         If passed a string, write to a file with that name.
+        If the string is empty, write to the default file (file0).
         If no params, return the string that would have been written.
         """
         o = ["0"] * 550
@@ -141,7 +145,10 @@ class Frisk:
         o[549] = self.time
         o.extend(self.custom_data)
         o = [str(i) for i in o]
+        f = None
         if file is not None:
+            if file == '':
+                file = self.savefile
             try:
                 f = open(file, "w")
             except TypeError:
@@ -206,3 +213,43 @@ class Frisk:
             self.custom_data = i[550:]
         except:
             raise main.UndertaleError
+
+    def get_ini_value(self, section, option, type=None):
+        """
+        Return a value contained in the INI file.
+        section and option are strings.
+        type can be a bool, an int or a float, and if so, return the corresponding type.
+        If it is None, return an str.
+        If the INI doesn't exist, or the corresponding section or option are missing, return None.
+        """
+        c = configparser.ConfigParser()
+        try:
+            with open(self.inifile) as o:
+                c.read_string(o.read())
+        except FileNotFoundError:
+            return None
+        if isinstance(type, int):
+            return c.getint(section, option, fallback=None)
+        elif isinstance(type, float):
+            return c.getfloat(section, option, fallback=None)
+        elif isinstance(type, bool):
+            return c.getboolean(section, option, fallback=None)
+        else:
+            return c.get(section, option, fallback=None)
+
+    def set_ini_value(self, section, option, value):
+        """
+        Set a value in the INI file.
+        section and option are strings.
+        value is the value to write.
+        This is safe to use if the INI file doesn't exist.
+        """
+        c = configparser.ConfigParser()
+        try:
+            with open(self.inifile) as o:
+                c.read_string(o.read())
+        except FileNotFoundError:
+            c[section] = {}
+        c[section][option] = str(value)
+        with open(self.inifile, 'w') as o:
+            c.write(o)

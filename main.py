@@ -165,6 +165,8 @@ def init():
     clock = pygame.time.Clock()
     global chara
     chara = frisk.Frisk()
+    chara.set_ini_value("General", "time", 0.0)
+    chara.save('')
     global running
     running = True
     global room
