@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import pygame
 import actor
+import time
 
 
 class Typer:
@@ -12,14 +13,13 @@ class Typer:
         self.text = ''
         self.actor = actor.Actor()
         self.scan_cursor = 0
-        self.delay = 0
+        self.delay = 0.05
         self.symbols = []
         self.display_symbols = []
         self.letter_spacing = 0
         self.line_spacing = 0
         self.column = 0
         self.line = 0
-        self.symbol_delay = 0.0
         self.surface = pygame.Surface((1, 1))
         self.on_symbol = lambda: None
 
@@ -40,8 +40,6 @@ class Typer:
             symb = self.text[self.scan_cursor]
             self.scan_cursor += 1
             if symb in 'XWROYBGPLp':  # one of the colors
-                print('color:', symb)
-                # self.scan_cursor += 1
                 return self.set_color(symb)
             elif symb == 'E':
                 symb = self.text[self.scan_cursor]
@@ -60,7 +58,8 @@ class Typer:
             self.scan_cursor += 1
             num = float(self.text[self.scan_cursor])
             self.scan_cursor += 1
-            return num
+            self.next_symbol()
+            return num * 0.4
         elif self.text[self.scan_cursor] == '&':  # command to break line
             self.line += 1
             self.column = 0
@@ -69,7 +68,7 @@ class Typer:
             self.symbols.append([self.text[self.scan_cursor], self.line, self.column])
             self.scan_cursor += 1
             self.column += 1
-            return self.symbol_delay
+            return self.delay
 
     def place_symbols(self):
         for i in self.symbols[len(self.display_symbols):]:
@@ -91,8 +90,11 @@ if __name__ == '__main__':
              '\W* Using these^1, you were&  able to win at "\RBall Game\W." '
     while 1:
         try:
-            input()
-            t.next_symbol()
+            # input()
+            try:
+                time.sleep(t.next_symbol())
+            except TypeError:
+                pass
             t.place_symbols()
             t.render()
             pygame.display.flip()
