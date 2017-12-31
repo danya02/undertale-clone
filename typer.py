@@ -122,11 +122,11 @@ class Typer:
         while 1:
             try:
                 try:
-                    time.sleep(t.next_symbol())
+                    time.sleep(self.next_symbol())
                 except TypeError:
                     pass
-                t.place_symbols()
-                t.render()
+                self.place_symbols()
+                self.render()
                 if self.on_run_loop is not None:
                     self.on_run_loop()
             except IndexError:
