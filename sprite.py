@@ -26,25 +26,33 @@ class DynamicSprite(pygame.sprite.Sprite):
         super().__init__()
         self.frames = [pygame.Surface((0, 0))] if not isinstance(frames, list) else frames
         self.frames = [scale(i, scale_factor) for i in self.frames]
-        self.x, self.y = pos
         self.index = 0
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = pos
         self.delay = delay
         self.counter = 0
 
-    def update(self):
-        super().update(self)
-        self.counter += 1
-        if self.counter == self.delay:
-            self.counter = 0
+    def update(self, update_index: bool = False):
+        super().update()
+        if update_index:
             self.index += 1
             if self.index == len(self.frames):
                 self.index = 0
             self.image = self.frames[self.index]
+        else:
+            self.counter += 1
+            if self.counter == self.delay:
+                self.counter = 0
+                self.index += 1
+                if self.index == len(self.frames):
+                    self.index = 0
+                self.image = self.frames[self.index]
+        x = self.rect.x + (self.image.get_width() // 2)
+        y = self.rect.y + (self.image.get_height() // 2)
         self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
+        self.rect.x = x - (self.image.get_width() // 2)
+        self.rect.y = y - (self.image.get_height() // 2)
 
 
 def get_sprite(name: str, x: int, y: int, scale_value: float = 1.0) -> StaticSprite:
@@ -56,5 +64,5 @@ def get_dynamic_sprite(name: str, scale_value: float = 1) -> DynamicSprite:
     for i in os.listdir(SPRITE_DIR):
         if name + "_" in i and ".png" in i:
             sprite_list.append(SPRITE_DIR + i)
-    sprite_list.sort()
+    sprite_list.sort(key=lambda x: float(x.strip('.png').split(name + '_')[1]))
     return DynamicSprite([pygame.image.load(i) for i in sprite_list], scale_factor=scale_value)

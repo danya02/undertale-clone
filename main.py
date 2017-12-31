@@ -4,6 +4,7 @@ import sys
 import gzip
 import threading
 import math
+import sprite
 
 # our modules are imported below the invoke_dog function
 import typer
@@ -122,10 +123,10 @@ def intro(version=0):
     """
     if version == 0:  # normal intro
         pygame.mixer.music.load("mus/mus_story_91.ogg")
-        images = []
-        for i in range(11):
-            images += [pygame.image.load("sprites/spr_introimage_" + str(i) + ".png")]
-        images = [scale(i, 3) for i in images]
+        image = sprite.get_dynamic_sprite('spr_introimage', 3)
+        image.rect.x = -80
+        image.rect.y = 0
+
         text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1 ",
                 "One day^1, war broke&out between the two&races^5. ^1 ",
                 "After a long battle^1,&the humans were&victorious^5. ^1 ",
@@ -133,12 +134,8 @@ def intro(version=0):
                 "Many years later^2.^2.^4. ^1 ",
                 "      MT. EBOTT&         201X^9 ",
                 "Legends say that those&who climb the mountain&never return^5.^3 ",
-                "",
                 " ^9 ^5 ",
-                " ^9 ^5 ^2 ",
-                " ^9 ^5 ^2 ",
-                " ^9 ^9 ^9 ^9 ^9 ^9 ",
-                " ^9 ^9 ^9 ^9 ^9 ",
+                " ^9 ^5 ",
                 " ^9 ^9 ^9 ^9 ^9 ^9 "]
         pygame.mixer.music.play()
 
@@ -146,16 +143,16 @@ def intro(version=0):
             d.blit(s, (200, 450))
             pygame.display.update()
 
-        for i, j in zip(images, text):
-            global d
-            d.blit(i, (400 - (i.get_width() / 2), 0))
+        for i in text:
+            d.blit(image.image, image.rect)
             s = pygame.Surface((600, 200))
             t = typer.Typer()
-            t.text = j
+            t.text = i
             t.surface = s
             t.to_on_run_loop = d
             t.on_run_loop = update
             t.run()
+            image.update(True)
         pygame.mixer.music.load("mus/mus_intronoise.ogg")
         i = pygame.image.load("sprites/splash.png")
         i = scale(i, 2.5)
