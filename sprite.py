@@ -12,7 +12,7 @@ def scale(img: pygame.Surface, times: float):
 
 class StaticSprite(pygame.sprite.Sprite):
     def __init__(self, sprite: pygame.Surface, x: int, y: int, scale_factor: float = 1):
-        # super().__init__(self)
+        super().__init__()
         self.image = scale(sprite, scale_factor)
         self.rect = sprite.get_rect()
         self.rect.x = x
@@ -23,7 +23,7 @@ class DynamicSprite(pygame.sprite.Sprite):
     def __init__(self, frames: [pygame.Surface] = None, pos: (int, int) = (0, 0), delay: int = 100,
                  scale_factor: float = 1.0):
 
-        #super().__init__(self)
+        super().__init__()
         self.frames = [pygame.Surface((0, 0))] if not isinstance(frames, list) else frames
         self.frames = [scale(i, scale_factor) for i in self.frames]
         self.x, self.y = pos
