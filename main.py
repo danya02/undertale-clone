@@ -6,6 +6,7 @@ import threading
 import math
 
 # our modules are imported below the invoke_dog function
+import typer
 
 global clock
 clock = None
@@ -125,12 +126,36 @@ def intro(version=0):
         for i in range(11):
             images += [pygame.image.load("sprites/spr_introimage_" + str(i) + ".png")]
         images = [scale(i, 3) for i in images]
-        delays = [8000, 7000, 8000, 6000, 6000, 6000, 8000, 6000, 8000, 8000, 15000]
+        text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1 ",
+                "One day^1, war broke&out between the two&races^5. ^1 ",
+                "After a long battle^1,&the humans were&victorious^5. ^1 ",
+                "They sealed the monsters&underground with a magic&spell^4. ^1 ",
+                "Many years later^2.^2.^4. ^1 ",
+                "      MT. EBOTT&         201X^9 ",
+                "Legends say that those&who climb the mountain&never return^5.^3 ",
+                "",
+                " ^9 ^5 ",
+                " ^9 ^5 ^2 ",
+                " ^9 ^5 ^2 ",
+                " ^9 ^9 ^9 ^9 ^9 ^9 ",
+                " ^9 ^9 ^9 ^9 ^9 ",
+                " ^9 ^9 ^9 ^9 ^9 ^9 "]
         pygame.mixer.music.play()
-        for i, j in zip(images, delays):
-            d.blit(i, (400 - (i.get_width() / 2), 0))
+
+        def update(s, d):
+            d.blit(s, (200, 450))
             pygame.display.update()
-            pygame.time.delay(j)
+
+        for i, j in zip(images, text):
+            global d
+            d.blit(i, (400 - (i.get_width() / 2), 0))
+            s = pygame.Surface((600, 200))
+            t = typer.Typer()
+            t.text = j
+            t.surface = s
+            t.to_on_run_loop = d
+            t.on_run_loop = update
+            t.run()
         pygame.mixer.music.load("mus/mus_intronoise.ogg")
         i = pygame.image.load("sprites/splash.png")
         i = scale(i, 2.5)
@@ -253,7 +278,7 @@ class UndertaleError(Exception):
 if __name__ == "__main__":
     try:
         init()
-        # intro(0)
+        intro(0)
         maincycle()
     except UndertaleError as e:
         try:

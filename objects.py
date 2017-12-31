@@ -26,7 +26,7 @@ class Object:
 class RaiseException(Object):
     def __init__(self):
         super().__init__(self)
-        self.sprite = sprite.get_sprite("spr_mysteryman", scale_value=2)
+        self.sprite = sprite.get_sprite("spr_mysteryman", 0, 0, scale_value=2)
         self.pos = (300, 300)
 
     def interact(self, chara):
@@ -40,7 +40,7 @@ class TestSAVEPoint(Object):
         self.sprite.frames[1] = pygame.transform.scale(self.sprite.frames[1], (
         int(self.sprite.frames[1].get_width() * 2), int(self.sprite.frames[1].get_height() * 2)))
         self.sprite.delay = 250
-        self.sprite.start()
+        # self.sprite.start()
         self.pos = (500, 500)
 
     def interact(self, chara):

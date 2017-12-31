@@ -27,7 +27,8 @@ class Typer:
         self.delay_skipped_step = False
         self.surface = pygame.Surface((1, 1))
         self.on_symbol = lambda: None
-        self.on_run_loop = lambda: None
+        self.to_on_run_loop = None
+        self.on_run_loop = lambda s, o: None
 
     def set_color(self, color: str) -> None:
         """
@@ -122,13 +123,14 @@ class Typer:
         while 1:
             try:
                 try:
-                    time.sleep(self.next_symbol())
+                    delay = self.next_symbol()
+                    time.sleep(delay)
                 except TypeError:
                     pass
                 self.place_symbols()
                 self.render()
                 if self.on_run_loop is not None:
-                    self.on_run_loop()
+                    self.on_run_loop(self.surface, self.to_on_run_loop)
             except IndexError:
                 return None
 
