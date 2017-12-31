@@ -6,8 +6,11 @@ import time
 
 class Typer:
     def __init__(self):
+        """
+        Base class for typers.
+        """
         pygame.init()
-        self.font = pygame.font.SysFont('Liberation', 32)
+        self.font = pygame.font.Font('fonts/determinationmono.ttf', 32)
         self.antialias = False
         self.color = pygame.Color('white')
         self.text = ''
@@ -20,64 +23,92 @@ class Typer:
         self.line_spacing = 0
         self.column = 0
         self.line = 0
+        self.delay_next = None
+        self.delay_skipped_step = False
         self.surface = pygame.Surface((1, 1))
         self.on_symbol = lambda: None
 
-    def set_color(self, color: str):
+    def set_color(self, color: str) -> None:
+        """
+        Set the following text to be of this color
+        :param color: one of symbols in 'XWROYBGPLp' that means one of the colors.
+        """
         try:
             self.color = {'X': pygame.Color('black'), 'W': pygame.Color('white'), 'R': pygame.Color('red'),
                           'O': pygame.Color('orange'), 'Y': pygame.Color('yellow'), 'B': pygame.Color('blue'),
                           'G': pygame.Color('green'), 'P': pygame.Color('purple'), 'L': pygame.Color('lightblue'),
                           'p': pygame.Color('pink')}[color]
-            return 'c{}'.format(self.text[self.scan_cursor])
         except KeyError:
             raise ValueError('color {} not found'.format(color))
 
-    def next_symbol(self):
+    def next_symbol(self) -> float:
+        """
+        Parse the next symbol. If it is a command, interpret the command instead
+        :return: The number of seconds to delay after this if typewriting.
+        :raises IndexError if trying to parse past the end of text.
+        """
         if self.text[self.scan_cursor] == '\\':  # general-purpose commands
             self.scan_cursor += 1
             self.set_color(self.text[self.scan_cursor])
             symb = self.text[self.scan_cursor]
             self.scan_cursor += 1
             if symb in 'XWROYBGPLp':  # one of the colors
-                return self.set_color(symb)
+                self.set_color(symb)
+                return 0.0
             elif symb == 'E':
                 symb = self.text[self.scan_cursor]
                 self.scan_cursor += 1
-                return self.actor.set_emote(symb)
+                self.actor.set_emote(symb)
+                return 0.0
             elif symb == 'M':
                 symb = self.text[self.scan_cursor]
                 self.scan_cursor += 1
-                return self.actor.set_motion(symb)
+                self.actor.set_motion(symb)
+                return 0.0
             elif symb == 'F':
                 symb = self.text[self.scan_cursor]
                 self.scan_cursor += 1
-                return self.actor.set_effect(symb)
-
+                self.actor.set_effect(symb)
+                return 0.0
         elif self.text[self.scan_cursor] == '^':  # command to delay for seconds after symbol
             self.scan_cursor += 1
             num = float(self.text[self.scan_cursor])
             self.scan_cursor += 1
-            self.next_symbol()
-            return num * 0.4
+            self.delay_next = num * 0.4
+            return 0.0
         elif self.text[self.scan_cursor] == '&':  # command to break line
             self.line += 1
             self.column = 0
             self.scan_cursor += 1
         else:  # normal symbols
-            self.symbols.append([self.text[self.scan_cursor], self.line, self.column])
+            self.symbols.append([self.text[self.scan_cursor], self.line, self.column, self.color])
             self.scan_cursor += 1
             self.column += 1
-            return self.delay
+            if self.delay_next is None:
+                return self.delay
+            else:
+                if not self.delay_skipped_step:
+                    self.delay_skipped_step = True
+                    return self.delay
+                tmp = self.delay_next
+                self.delay_next = None
+                self.delay_skipped_step = False
+                return tmp
 
-    def place_symbols(self):
+    def place_symbols(self) -> None:
+        """
+        From the symbols list, create a list of surfaces with coords where to blit them.
+        """
         for i in self.symbols[len(self.display_symbols):]:
-            symb = self.font.render(i[0], self.antialias, self.color)
+            symb = self.font.render(i[0], self.antialias, i[3])
             x = (self.font.get_linesize() + self.line_spacing) * i[1]
             y = (self.font.size("W")[0] + self.letter_spacing) * i[2]
             self.display_symbols.append((symb, y, x, i[0]))
 
-    def render(self):
+    def render(self) -> None:
+        """
+        Render the list of surfaces created by place_symbols.
+        """
         for i in self.display_symbols:
             self.surface.blit(i[0], (i[1], i[2]))
 
@@ -90,13 +121,14 @@ if __name__ == '__main__':
              '\W* Using these^1, you were&  able to win at "\RBall Game\W." '
     while 1:
         try:
-            # input()
             try:
-                time.sleep(t.next_symbol())
+                delay = t.next_symbol()
+                time.sleep(delay)
             except TypeError:
                 pass
             t.place_symbols()
             t.render()
             pygame.display.flip()
         except IndexError:
-            pass
+            time.sleep(5)
+            exit(0)
