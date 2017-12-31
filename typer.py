@@ -27,6 +27,7 @@ class Typer:
         self.delay_skipped_step = False
         self.surface = pygame.Surface((1, 1))
         self.on_symbol = lambda: None
+        self.on_run_loop = lambda: None
 
     def set_color(self, color: str) -> None:
         """
@@ -81,6 +82,7 @@ class Typer:
             self.column = 0
             self.scan_cursor += 1
         else:  # normal symbols
+            self.on_symbol()
             self.symbols.append([self.text[self.scan_cursor], self.line, self.column, self.color])
             self.scan_cursor += 1
             self.column += 1
@@ -112,6 +114,24 @@ class Typer:
         for i in self.display_symbols:
             self.surface.blit(i[0], (i[1], i[2]))
 
+    def run(self) -> None:
+        """
+        Iterate over the text, with appropriate delays, running on_run_loop every iteration.
+        Return when the text is completely rendered.
+        """
+        while 1:
+            try:
+                try:
+                    time.sleep(t.next_symbol())
+                except TypeError:
+                    pass
+                t.place_symbols()
+                t.render()
+                if self.on_run_loop is not None:
+                    self.on_run_loop()
+            except IndexError:
+                return None
+
 
 if __name__ == '__main__':
     s = pygame.display.set_mode((750, 750))
@@ -119,16 +139,7 @@ if __name__ == '__main__':
     t.surface = s
     t.text = '\W* \OBravery^1. \YJustice.\W  &*\B Integrity^1. \GKindness^1.\W &*\P Perseverance^1. \LPatience. \W &' \
              '\W* Using these^1, you were&  able to win at "\RBall Game\W." '
-    while 1:
-        try:
-            try:
-                delay = t.next_symbol()
-                time.sleep(delay)
-            except TypeError:
-                pass
-            t.place_symbols()
-            t.render()
-            pygame.display.flip()
-        except IndexError:
-            time.sleep(5)
-            exit(0)
+    t.on_run_loop = pygame.display.flip
+    t.run()
+    time.sleep(5)
+    exit(0)
