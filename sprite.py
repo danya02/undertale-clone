@@ -11,7 +11,7 @@ def scale(img: pygame.Surface, times: float):
 
 
 class StaticSprite(pygame.sprite.Sprite):
-    def __init__(self, sprite: pygame.Surface, x: int, y: int, scale_factor: float = 1):
+    def __init__(self, sprite: pygame.Surface, x: int = 0, y: int = 0, scale_factor: float = 1):
         super().__init__()
         self.image = scale(sprite, scale_factor)
         self.rect = sprite.get_rect()
@@ -48,15 +48,13 @@ class DynamicSprite(pygame.sprite.Sprite):
                 if self.index == len(self.frames):
                     self.index = 0
                 self.image = self.frames[self.index]
-        x = self.rect.x + (self.image.get_width() // 2)
-        y = self.rect.y + (self.image.get_height() // 2)
+        center = self.rect.center
         self.rect = self.image.get_rect()
-        self.rect.x = x - (self.image.get_width() // 2)
-        self.rect.y = y - (self.image.get_height() // 2)
+        self.rect.center = center
 
 
-def get_sprite(name: str, x: int, y: int, scale_value: float = 1.0) -> StaticSprite:
-    return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"), x, y, scale_value)
+def get_sprite(name: str, scale_value: float = 1.0) -> StaticSprite:
+    return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"), scale_factor=scale_value)
 
 
 def get_dynamic_sprite(name: str, scale_value: float = 1) -> DynamicSprite:

@@ -6,6 +6,7 @@ import objects
 class Room:
     def __int__(self):
         return int(self.id)
+
     def __init__(self, *args):
         self.id = 0
         self.background = pygame.Surface((800, 600))
@@ -17,7 +18,8 @@ class Room:
     def draw(self):
         self._display_.blit(self.background, self.bg_pan)
         for i in self.objects:
-            self._display_.blit(i.sprite.sprite, i.pos)
+            i.sprite.update()
+            self._display_.blit(i.sprite.image, i.sprite.rect)
 
 
 class Room_TEST1(Room):
