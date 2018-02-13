@@ -21,7 +21,7 @@ global d
 d = None
 if __name__ == '__main__':
     pygame.init()
-    d = pygame.display.set_mode((800, 600))
+    d = pygame.display.set_mode((646, 505))
 
 
 def scale(img, times):
@@ -67,7 +67,7 @@ def invoke_dog(text="", kind=0):
         pass
     length = 1000
     height = 33
-    while not length < 600:
+    while not length < 505:
         height -= 1
         try:
             font = pygame.font.Font("fonts/determinationmono.ttf", height)
@@ -92,14 +92,14 @@ def invoke_dog(text="", kind=0):
                         sys.exit()
             d.fill(pygame.Color('black'))
             d.blit([s1, s3][kind],
-                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
-            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+                   (323 - int([s1, s3][kind].get_width() / 2), 252 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (252 - int(text_obj.get_width() / 2), 350))
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
             d.fill(pygame.Color('black'))
             d.blit([s2, s4][kind],
-                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
-            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+                   (323 - int([s1, s3][kind].get_width() / 2), 252 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (252 - int(text_obj.get_width() / 2), 350))
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
     except pygame.error:
@@ -123,8 +123,8 @@ def intro(version=0):
     """
     if version == 0:  # normal intro
         pygame.mixer.music.load("mus/mus_story_91.ogg")
-        image = sprite.get_dynamic_sprite('spr_introimage', 3)
-        image.rect.x = -80
+        image = sprite.get_dynamic_sprite('spr_introimage', 2)
+        image.rect.x = 0
         image.rect.y = 0
 
         text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1 ",
@@ -139,13 +139,13 @@ def intro(version=0):
                 " ^9 ^9 ^9 ^9 ^9 ^9 "]
         pygame.mixer.music.play()
 
-        def update(s, d):
-            d.blit(s, (200, 450))
+        def update(s: pygame.Surface, d: pygame.Surface):
+            d.blit(s, (150, 300))
             pygame.display.update()
 
         for i in text:
             d.blit(image.image, image.rect)
-            s = pygame.Surface((600, 200))
+            s = pygame.Surface((504, 200))
             t = typer.Typer()
             t.text = i
             t.surface = s
@@ -156,7 +156,7 @@ def intro(version=0):
         pygame.mixer.music.load("mus/mus_intronoise.ogg")
         i = pygame.image.load("sprites/splash.png")
         i = scale(i, 2.5)
-        d.blit(i, (400 - (i.get_width() / 2), 300 - (i.get_height() / 2)))
+        d.blit(i, (323 - (i.get_width() / 2), 252 - (i.get_height() / 2)))
         pygame.display.update()
         pygame.mixer.music.play()
         pygame.time.wait(5000)
@@ -166,13 +166,13 @@ def intro(version=0):
         for i in ["_0", "2_0"]:
             images += [scale(pygame.image.load("sprites/spr_fakeintro" + str(i) + ".png"), 2.5)]
         pygame.mixer.music.play()
-        d.blit(images[0], (400 - (images[0].get_width() / 2), 0))
+        d.blit(images[0], (323 - (images[0].get_width() / 2), 0))
         pygame.display.update()
         pygame.time.delay(6000)
         pygame.time.delay(2000)
         pygame.mixer.music.load("mus/mus_story_stuck.ogg")
         pygame.mixer.music.play(-1)
-        d.blit(images[1], (400 - (images[1].get_width() / 2), 0))
+        d.blit(images[1], (323 - (images[1].get_width() / 2), 0))
         pygame.display.update()
         pygame.time.wait(5000)
     elif version == 2:  # world destroyed
@@ -260,7 +260,7 @@ def maincycle():
             chara.moving = True
             chara.pos = (chara.pos[0], chara.pos[1] + 0.5)
         pygame.display.update()
-        if not int(chara.pos[0]) in range(800) or not int(chara.pos[1]) in range(600):
+        if not int(chara.pos[0]) in range(646) or not int(chara.pos[1]) in range(505):
             raise NotImplementedError("chara left screen area", 1)
 
 
@@ -275,7 +275,7 @@ class UndertaleError(Exception):
 if __name__ == "__main__":
     try:
         init()
-        intro(0)
+        # intro(0)
         maincycle()
     except UndertaleError as e:
         try:
