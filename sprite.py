@@ -15,8 +15,8 @@ class StaticSprite(pygame.sprite.Sprite):
         super().__init__()
         self.image = scale(sprite, scale_factor)
         self.rect = sprite.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.centerx = x
+        self.rect.centery = y
 
 
 class DynamicSprite(pygame.sprite.Sprite):
@@ -29,7 +29,7 @@ class DynamicSprite(pygame.sprite.Sprite):
         self.index = 0
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = pos
+        self.rect.centerx, self.rect.centery = pos
         self.delay = delay
         self.counter = 0
 
