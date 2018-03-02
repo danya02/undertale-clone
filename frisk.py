@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# coding=utf-8
 import item
 import sprite
 import main
