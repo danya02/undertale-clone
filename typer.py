@@ -52,7 +52,6 @@ class Typer:
         """
         if self.text[self.scan_cursor] == '\\':  # general-purpose commands
             self.scan_cursor += 1
-            self.set_color(self.text[self.scan_cursor])
             symb = self.text[self.scan_cursor]
             self.scan_cursor += 1
             if symb in 'XWROYBGPLp':  # one of the colors
@@ -73,6 +72,8 @@ class Typer:
                 self.scan_cursor += 1
                 self.actor.set_effect(symb)
                 return 0.0
+            elif symb=='C':
+                raise NotImplemented('Choices are not yes implemented')
         elif self.text[self.scan_cursor] == '^':  # command to delay for thirds of second after symbol
             self.scan_cursor += 1
             num = float(self.text[self.scan_cursor])

@@ -23,7 +23,6 @@ global d
 d = None
 if __name__ == '__main__':
     pygame.init()
-    d = pygame.display.set_mode((646, 505))
 
 
 def scale(img, times):
@@ -37,6 +36,7 @@ def invoke_dog(text="", kind=0):
     Supposed to work under as few assumptions as possible.
     """
     pygame.init()
+    d = pygame.display.set_mode((646, 505))
     s1 = pygame.image.fromstring(gzip.decompress(
         b'\x1f\x8b\x08\x00\xd8\xb8\xbbY\x02\xffc`\xa0\x14\xfc\xff\xff\x1fB\xc2\x01\\\x90\x18\xbdX\x01%z\tjGv$V\xc7'
         b'\x93g).\x13\xe0"h\n\x881\x01Y1ZP\x13\xe3\x184\xff\x92\xe1\x8b\xffd\x81\x11\xa5\x97\xd4\x80\xc5\xaf\x17\x7f'
@@ -113,10 +113,16 @@ if __name__ == "__main__":
     try:
         import frisk
         import rooms
+        import menu
+        import globals
     except ImportError as e:
         frisk = None
         rooms = None
+        menu = None
+        globals = None
         invoke_dog("ImportError: " + str(e))
+    d = pygame.display.set_mode((646, 505))
+    globals.display = d
 
 
 def intro(version=0):
@@ -124,64 +130,11 @@ def intro(version=0):
     Play the Undertale intro, as seen on program start. Return when the intro is done.
     """
     if version == 0:  # normal intro
-        pygame.mixer.music.load("mus/mus_story_91.ogg")
-        image = sprite.get_dynamic_sprite('spr_introimage', 2)
-        image.rect.x = 0
-        image.rect.y = 0
-
-        text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1  ",
-                "One day^1, war broke&out between the two&races^5. ^1  ",
-                "After a long battle^1,&the humans were&victorious^5. ^1  ",
-                "They sealed the monsters&underground with a magic&spell^4. ^1  ",
-                "Many years later^2.^2.^4. ^1  ",
-                "      MT. EBOTT&         201X^9  ",
-                "Legends say that those&who climb the mountain&never return^5.^3  ",
-                " ^9 ^5  ",
-                " ^9 ^5  ",
-                " ^9 ^9 ^9 ^9 ^9 ^9  "]
-        pygame.mixer.music.play()
-
-        def update(s: pygame.Surface, d: pygame.Surface):
-            d.blit(s, (150, 300))
-            pygame.display.update()
-
-        for i in text:
-            d.blit(image.image, image.rect)
-            s = pygame.Surface((504, 200))
-            t = typer.Typer()
-            t.text = i
-            t.surface = s
-            t.to_on_run_loop = d
-            t.on_run_loop = update
-            t.run()
-            image.update(True)
-        pygame.mixer.music.load("mus/mus_intronoise.ogg")
-        i = pygame.image.load("sprites/splash.png")
-        i = scale(i, 2.5)
-        d.blit(i, (323 - (i.get_width() / 2), 252 - (i.get_height() / 2)))
-        pygame.display.update()
-        pygame.mixer.music.play()
-        pygame.time.wait(5000)
+        menu.normal()
     elif version == 1:  # hijacked by Flowey EX
-        pygame.mixer.music.load("mus/mus_story_91.ogg")
-        images = []
-        for i in ["_0", "2_0"]:
-            images += [scale(pygame.image.load("sprites/spr_fakeintro" + str(i) + ".png"), 2.5)]
-        pygame.mixer.music.play()
-        d.blit(images[0], (323 - (images[0].get_width() / 2), 0))
-        pygame.display.update()
-        pygame.time.delay(6000)
-        pygame.time.delay(2000)
-        pygame.mixer.music.load("mus/mus_story_stuck.ogg")
-        pygame.mixer.music.play(-1)
-        d.blit(images[1], (323 - (images[1].get_width() / 2), 0))
-        pygame.display.update()
-        pygame.time.wait(5000)
+        menu.glitched()
     elif version == 2:  # world destroyed
-        pygame.mixer.music.load("mus/mus_wind.ogg")
-        pygame.mixer.music.play(-1)
-        for i in range(600):
-            pygame.time.wait(1000)
+        menu.gone()
 
 
 def init():
@@ -240,7 +193,7 @@ def maincycle():
                 if event.key == pygame.K_RETURN or event.key == pygame.K_z:
                     for i in room.objects:
                         if int(math.fabs(i.x - chara.x) * 2) + int(math.fabs(
-                                        i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
+                                i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
                             i.interact(chara)
                             break
         keys_pressed = pygame.key.get_pressed()
@@ -277,7 +230,7 @@ class UndertaleError(Exception):
 if __name__ == "__main__":
     try:
         init()
-        intro(0)
+        intro(2)
         maincycle()
     except UndertaleError as e:
         try:
