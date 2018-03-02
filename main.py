@@ -127,16 +127,16 @@ def intro(version=0):
         image.rect.x = 0
         image.rect.y = 0
 
-        text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1 ",
-                "One day^1, war broke&out between the two&races^5. ^1 ",
-                "After a long battle^1,&the humans were&victorious^5. ^1 ",
-                "They sealed the monsters&underground with a magic&spell^4. ^1 ",
-                "Many years later^2.^2.^4. ^1 ",
-                "      MT. EBOTT&         201X^9 ",
-                "Legends say that those&who climb the mountain&never return^5.^3 ",
-                " ^9 ^5 ",
-                " ^9 ^5 ",
-                " ^9 ^9 ^9 ^9 ^9 ^9 "]
+        text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1  ",
+                "One day^1, war broke&out between the two&races^5. ^1  ",
+                "After a long battle^1,&the humans were&victorious^5. ^1  ",
+                "They sealed the monsters&underground with a magic&spell^4. ^1  ",
+                "Many years later^2.^2.^4. ^1  ",
+                "      MT. EBOTT&         201X^9  ",
+                "Legends say that those&who climb the mountain&never return^5.^3  ",
+                " ^9 ^5  ",
+                " ^9 ^5  ",
+                " ^9 ^9 ^9 ^9 ^9 ^9  "]
         pygame.mixer.music.play()
 
         def update(s: pygame.Surface, d: pygame.Surface):
@@ -275,7 +275,7 @@ class UndertaleError(Exception):
 if __name__ == "__main__":
     try:
         init()
-        # intro(0)
+        intro(0)
         maincycle()
     except UndertaleError as e:
         try:

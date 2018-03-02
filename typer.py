@@ -72,12 +72,17 @@ class Typer:
                 self.scan_cursor += 1
                 self.actor.set_effect(symb)
                 return 0.0
-        elif self.text[self.scan_cursor] == '^':  # command to delay for seconds after symbol
+        elif self.text[self.scan_cursor] == '^':  # command to delay for thirds of second after symbol
             self.scan_cursor += 1
             num = float(self.text[self.scan_cursor])
             self.scan_cursor += 1
-            self.delay_next = num * 0.4
-            return 0.0
+            if self.delay_next:
+                tmp = self.delay_next
+                self.delay_next = num * 0.333
+                return tmp
+            else:
+                self.delay_next = num * 0.333
+                return 0.0
         elif self.text[self.scan_cursor] == '&':  # command to break line
             self.line += 1
             self.column = 0
@@ -87,16 +92,12 @@ class Typer:
             self.symbols.append([self.text[self.scan_cursor], self.line, self.column, self.color])
             self.scan_cursor += 1
             self.column += 1
-            if self.delay_next is None:
-                return self.delay
-            else:
-                if not self.delay_skipped_step:
-                    self.delay_skipped_step = True
-                    return self.delay
+            if self.delay_next is not None:
                 tmp = self.delay_next
                 self.delay_next = None
-                self.delay_skipped_step = False
                 return tmp
+            else:
+                return self.delay
 
     def place_symbols(self) -> None:
         """
@@ -124,13 +125,19 @@ class Typer:
             try:
                 try:
                     delay = self.next_symbol()
-                    time.sleep(delay)
                 except TypeError:
-                    pass
+                    delay=0
                 self.place_symbols()
                 self.render()
                 if self.on_run_loop is not None:
-                    self.on_run_loop(self.surface, self.to_on_run_loop)
+                    try:
+                        self.on_run_loop(self.surface, self.to_on_run_loop)
+                    except TypeError:
+                        try:
+                            self.on_run_loop(self.surface)
+                        except TypeError:
+                            self.on_run_loop()
+                time.sleep(delay if delay else 0)
             except IndexError:
                 return None
 
