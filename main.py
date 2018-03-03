@@ -230,7 +230,7 @@ class UndertaleError(Exception):
 if __name__ == "__main__":
     try:
         init()
-        intro(2)
+        intro(1)
         maincycle()
     except UndertaleError as e:
         try:

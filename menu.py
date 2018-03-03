@@ -73,8 +73,11 @@ def glitched():
     def glitch():
         c = pygame.time.Clock()
         while 1:
-            tmp
-            c.tick(10)
+            try:
+                tmp
+            except NameError:
+                break
+            c.tick(20)
             s = ''
             for i in range(random.randint(4, 32)):
                 s += random.choice(string.printable)
@@ -89,6 +92,7 @@ def glitched():
     pygame.display.update()
     pygame.time.wait(5000)
     del tmp
+    pygame.time.wait(200)
     pygame.display.set_caption('Floweytale')
 
 
