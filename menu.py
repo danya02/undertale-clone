@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # coding=utf-8
+import os
 import pygame
 import random
 import string
@@ -68,15 +69,17 @@ def glitched():
     pygame.time.delay(6000)
     pygame.time.delay(2000)
     tmp = object()
+
     def glitch():
         c = pygame.time.Clock()
         while 1:
             tmp
             c.tick(10)
-            s=''
-            for i in range(random.randint(4,32)):
-                s+=random.choice(string.printable)
+            s = ''
+            for i in range(random.randint(4, 32)):
+                s += random.choice(string.printable)
             pygame.display.set_caption(s)
+
     t = threading.Thread(target=glitch, name='title glitcher')
     t.start()
 
@@ -93,37 +96,67 @@ def gone():
     pygame.display.set_caption('')
     pygame.mixer.music.load("mus/mus_wind.ogg")
     pygame.mixer.music.play(-1)
-    for i in range(600 if not globals.DEBUG else 10):
+    for i in range(600 if not globals.DEBUG else 5):
         pygame.time.wait(1000)
-    text = ['Interesting.',
-            'You want to go back.',
-            'You want to go bac^1k&to the worl^2d&you destroyed.',
-            'It was you who pushed&everythin^1g to its edge.',
-            'It was you who led the worl^1d&to its destruction.',
-            'But you cannot accept it.',
-            'You think you are above&consequences.&         Yes         No\C',
-            'Exactly.',
-            'Then what are you looking for?',
-            'Perhaps.',
-            'We can reach a compromise.',
-            'You still have somethin^1g&I want.',
-            'Give it to me.',
-            'And I will bring this&world back.',
-            'Then it is agreed.',
-            'You will give me your SOUL.& &         Yes         No\C',
-            'Then stay here for&all eternity.',
-            'Then^1, it is done.']
-
+    surface = pygame.Surface((504,200))
     def update(s: pygame.Surface, d: pygame.Surface):
         d.blit(s, (150, 300))
         pygame.display.update()
 
-    for i in text:
-        s = pygame.Surface((504, 200))
-        t = typer.Typer()
-        t.delay  = 0.12
-        t.text = i
-        t.surface = s
-        t.to_on_run_loop = globals.display
-        t.on_run_loop = update
-        t.run()
+    def clean(s: pygame.Surface):
+        s.fill(pygame.Color('black'))
+        return None
+    def create(text):
+        return typer.MetaTyper(text, update, globals.display, clean, delay=0.01, surface=surface,can_skip=False)
+    text = ['Interesting./',
+            'You want to go back./',
+            'You want to go bac^1k&to the worl^2d&you destroyed./',
+            'It was you who pushed&everythin^1g to its edge./',
+            'It was you who led the worl^1d&to its destruction./',
+            'But you cannot accept it./',
+            'You think you are above&consequences.&         Yes         No\C']
+    mt = create(text)
+    s, choice = mt.run()
+    text = ['Exactly./' if choice == typer.Typer.CHOICE1 else 'Then what are you looking for?/', '  ']
+    mt = create(text)
+    mt.run()
+    globals.display.fill(pygame.Color('black'))
+    pygame.display.flip()
+    pygame.time.wait(7000)
+    text = ['Perhaps./',
+            'We can reach a compromise./',
+            'You still have somethin^1g&I want./',
+            'Give it to me./',
+            'And I will bring this&world back./',
+            ' & &         Yes         No\C']
+    mt = create(text)
+    s, choice = mt.run()
+    def eternal():
+        text = ['Then stay here for&all eternity./','']
+        mt = create(text)
+        s, choice = mt.run()
+        globals.display.fill(pygame.Color('black'))
+        pygame.display.flip()
+        while 1:
+            pass
+    if choice == typer.Typer.CHOICE1:
+        text = ['Then it is agreed./',
+                'You will give me your SOUL.& &         Yes         No\C']
+        mt = create(text)
+        s, choice = mt.run()
+        if choice == typer.Typer.CHOICE1:
+            text = ['.../',
+                    'Then^1, it is done./']
+            mt = create(text)
+            s, choice = mt.run()
+            try:
+                os.remove('system_information_962')
+            except FileNotFoundError:
+                pass
+            with open('system_information_963', 'w') as a:
+                a.write('a')
+            exit(0)
+        else:
+            eternal()
+    else:
+        eternal()

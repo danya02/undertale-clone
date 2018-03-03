@@ -2,10 +2,18 @@
 # coding=utf-8
 import pygame
 import actor
+import globals
+import sprite
 import time
 
 
 class Typer:
+    SKIPPED = 1
+    NOTSKIPPED = 0
+    CHOICE1 = 10
+    CHOICE2 = 20
+    NOCHOICE = 15
+
     def __init__(self):
         """
         Base class for typers.
@@ -18,6 +26,7 @@ class Typer:
         self.actor = actor.Actor()
         self.scan_cursor = 0
         self.delay = 0.05
+        self.background = pygame.Color('black')
         self.symbols = []
         self.display_symbols = []
         self.letter_spacing = 0
@@ -30,6 +39,10 @@ class Typer:
         self.on_symbol = lambda: None
         self.to_on_run_loop = None
         self.on_run_loop = lambda s, o: None
+        self.can_skip = True
+        self.choice_mode = False
+        self.choice = 0
+        self.pause = False
 
     def set_color(self, color: str) -> None:
         """
@@ -72,8 +85,9 @@ class Typer:
                 self.scan_cursor += 1
                 self.actor.set_effect(symb)
                 return 0.0
-            elif symb=='C':
-                raise NotImplemented('Choices are not yes implemented')
+            elif symb == 'C':
+                self.choice_mode = True
+                return 0.0
         elif self.text[self.scan_cursor] == '^':  # command to delay for thirds of second after symbol
             self.scan_cursor += 1
             num = float(self.text[self.scan_cursor])
@@ -89,6 +103,10 @@ class Typer:
             self.line += 1
             self.column = 0
             self.scan_cursor += 1
+        elif self.text[self.scan_cursor] == '/':  # command to await 'accept' key
+            self.pause = True
+            self.scan_cursor += 1
+            return 0.0
         else:  # normal symbols
             self.on_symbol()
             self.symbols.append([self.text[self.scan_cursor], self.line, self.column, self.color])
@@ -115,33 +133,98 @@ class Typer:
         """
         Render the list of surfaces created by place_symbols.
         """
+        self.surface.fill(self.background)
         for i in self.display_symbols:
             self.surface.blit(i[0], (i[1], i[2]))
 
-    def run(self) -> None:
+    def run_wrapper(self) -> None:
+        """
+        Execute on_run_loop in a safe manner.
+        """
+        if self.on_run_loop is not None:
+            try:
+                self.on_run_loop(self.surface, self.to_on_run_loop)
+            except TypeError:
+                try:
+                    self.on_run_loop(self.surface)
+                except TypeError:
+                    self.on_run_loop()
+
+    def run(self) -> int:
         """
         Iterate over the text, with appropriate delays, running on_run_loop every iteration.
-        Return when the text is completely rendered.
+        Return when the text is completely rendered. Return values statically defined by Typer class.
         """
+        will_skip = False
         while 1:
             try:
                 try:
                     delay = self.next_symbol()
                 except TypeError:
-                    delay=0
+                    delay = 0
                 self.place_symbols()
                 self.render()
-                if self.on_run_loop is not None:
-                    try:
-                        self.on_run_loop(self.surface, self.to_on_run_loop)
-                    except TypeError:
-                        try:
-                            self.on_run_loop(self.surface)
-                        except TypeError:
-                            self.on_run_loop()
-                time.sleep(delay if delay else 0)
+                self.run_wrapper()
+                if not will_skip:
+                    time.sleep(delay if delay else 0)
+                else:
+                    pass
+                if self.can_skip:
+                    for i in pygame.event.get(pygame.KEYDOWN):
+                        if i.key in globals.cancel:
+                            will_skip=True
+                while self.pause:
+                    for i in pygame.event.get(pygame.KEYDOWN):
+                        if i.key in globals.accept:
+                            self.pause = False
+                if self.choice_mode:
+                    heart = sprite.get_sprite('spr_heart', 1)
+                    while 1:
+                        heart.rect.center = (132,82) if self.choice ==0 else (325,82)
+                        self.render()
+                        self.surface.blit(heart.image, heart.rect)
+                        self.run_wrapper()
+                        for i in pygame.event.get(pygame.KEYDOWN):
+                            if i.key in [globals.left,globals.right]:
+                                self.choice = 1 if self.choice is 0 else 0
+                            elif i.key in globals.accept:
+                                raise UserWarning
             except IndexError:
-                return None
+                return Typer.SKIPPED if will_skip else Typer.NOTSKIPPED
+            except UserWarning:
+                return Typer.CHOICE1 if self.choice==0 else Typer.CHOICE2
+
+class MetaTyper:
+    """
+    Class for creating Typers sequentially.
+    """
+    def __init__(self,text:[str],on_run_loop:callable = lambda x,y:None,to_on_run_loop=None,clean_param:callable=lambda x:None, **opts):
+        self.text = text
+        self.on_loop = on_run_loop
+        self.on_loop_param = to_on_run_loop
+        self.clean_param = clean_param
+        self.options = opts
+        self.skipcount = 0
+        self.choice = Typer.NOCHOICE
+    def run(self) -> (int,int):
+        """
+        Execute text render and collect results.
+        :return: 2-tuple of int: how many skips occurred and what is the resulting choice.
+        """
+        for i in self.text:
+            typer = Typer()
+            typer.text = i
+            typer.on_run_loop = self.on_loop
+            typer.to_on_run_loop = self.on_loop_param
+            for i in self.options:
+                typer.__setattr__(i, self.options[i])
+            res = typer.run()
+            if res == Typer.SKIPPED:
+                self.skipcount+=1
+            elif res in [Typer.CHOICE1,typer.CHOICE2]:
+                self.choice = res
+            self.clean_param(self.on_loop_param)
+        return self.skipcount, self.choice
 
 
 if __name__ == '__main__':
