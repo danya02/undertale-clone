@@ -230,7 +230,11 @@ class UndertaleError(Exception):
 if __name__ == "__main__":
     try:
         init()
-        intro(1)
+        try:
+            open('system_information_962')
+            intro(2)
+        except FileNotFoundError:
+            intro()
         maincycle()
     except UndertaleError as e:
         try:

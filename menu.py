@@ -111,7 +111,7 @@ def gone():
         s.fill(pygame.Color('black'))
         return None
     def create(text):
-        return typer.MetaTyper(text, update, globals.display, clean, delay=0.01, surface=surface,can_skip=False)
+        return typer.MetaTyper(text, update, globals.display, clean, delay=0.1, surface=surface,can_skip=False)
     text = ['Interesting./',
             'You want to go back./',
             'You want to go bac^1k&to the worl^2d&you destroyed./',
@@ -159,7 +159,7 @@ def gone():
                 pass
             with open('system_information_963', 'w') as a:
                 a.write('a')
-            exit(0)
+            os.abort()
         else:
             eternal()
     else:
