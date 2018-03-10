@@ -37,17 +37,17 @@ def normal():
     def update(s: pygame.Surface, d: pygame.Surface):
         d.blit(s, (150, 300))
         pygame.display.update()
-
-    for i in text:
-        globals.display.blit(image.image, image.rect)
-        s = pygame.Surface((504, 200))
-        t = typer.Typer()
-        t.text = i
-        t.surface = s
-        t.to_on_run_loop = globals.display
-        t.on_run_loop = update
-        t.run()
-        image.update(True)
+    if not globals.DEBUG:
+        for i in text:
+            globals.display.blit(image.image, image.rect)
+            s = pygame.Surface((504, 200))
+            t = typer.Typer()
+            t.text = i
+            t.surface = s
+            t.to_on_run_loop = globals.display
+            t.on_run_loop = update
+            t.run()
+            image.update(True)
     pygame.mixer.music.load("mus/mus_intronoise.ogg")
     i = pygame.image.load("sprites/splash.png")
     i = scale(i, 2.5)

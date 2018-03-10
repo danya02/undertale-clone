@@ -4,6 +4,8 @@ import os
 import pygame
 import threading
 
+import re
+
 SPRITE_DIR = "./sprites/"
 
 
@@ -60,8 +62,9 @@ def get_sprite(name: str, scale_value: float = 1.0) -> StaticSprite:
 
 def get_dynamic_sprite(name: str, scale_value: float = 1) -> DynamicSprite:
     sprite_list = []
+    r = re.compile(name+'_[0-9]+.png')
     for i in os.listdir(SPRITE_DIR):
-        if name + "_" in i and ".png" in i:
+        if r.match(i):
             sprite_list.append(SPRITE_DIR + i)
     sprite_list.sort(key=lambda x: float(x.strip('.png').split(name + '_')[1]))
     return DynamicSprite([pygame.image.load(i) for i in sprite_list], scale_factor=scale_value)
