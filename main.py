@@ -13,14 +13,10 @@ import typer
 
 global clock
 clock = None
-global chara
-chara = None
 global running
 running = True
 global room
 room = None
-global d
-d = None
 if __name__ == '__main__':
     pygame.init()
 
@@ -36,7 +32,7 @@ def invoke_dog(text=None, kind=0):
     Supposed to work under as few assumptions as possible.
     """
     pygame.init()
-    d = pygame.display.set_mode((646, 505))
+    d = pygame.display.set_mode((800, 600))
     s1 = pygame.image.fromstring(gzip.decompress(
         b'\x1f\x8b\x08\x00\xd8\xb8\xbbY\x02\xffc`\xa0\x14\xfc\xff\xff\x1fB\xc2\x01\\\x90\x18\xbdX\x01%z\tjGv$V\xc7'
         b'\x93g).\x13\xe0"h\n\x881\x01Y1ZP\x13\xe3\x184\xff\x92\xe1\x8b\xffd\x81\x11\xa5\x97\xd4\x80\xc5\xaf\x17\x7f'
@@ -128,15 +124,15 @@ def invoke_dog(text=None, kind=0):
             except IndexError:
                 pass
 
-            d.fill(pygame.Color('black'))
-            d.blit([s1, s3][kind],
+            globals.display.fill(pygame.Color('black'))
+            globals.display.blit([s1, s3][kind],
                    (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
-            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+            globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             if scrollable:
                 if cursor > 0:
-                    d.blit(left_pointer, (50, 500))
+                    globals.display.blit(left_pointer, (50, 500))
                 if cursor < len(text_objs) - 1:
-                    d.blit(right_pointer, (750, 500))
+                    globals.display.blit(right_pointer, (750, 500))
 
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
@@ -157,15 +153,15 @@ def invoke_dog(text=None, kind=0):
             except IndexError:
                 pass
 
-            d.fill(pygame.Color('black'))
-            d.blit([s2, s4][kind],
+            globals.display.fill(pygame.Color('black'))
+            globals.display.blit([s2, s4][kind],
                    (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
-            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+            globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             if scrollable:
                 if cursor > 0:
-                    d.blit(left_pointer, (50, 500))
+                    globals.display.blit(left_pointer, (50, 500))
                 if cursor < len(text_objs) - 1:
-                    d.blit(right_pointer, (750, 500))
+                    globals.display.blit(right_pointer, (750, 500))
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
     except pygame.error:
@@ -180,11 +176,13 @@ if __name__ == "__main__":
         import sprite
         import menu
         import globals
+        globals.display = pygame.display.set_mode((646,505))
     except ImportError as e:
         frisk = None
         rooms = None
         sprite = None
         menu = None
+        globals = None
         exc_type, exc_value, exc_traceback = sys.exc_info()
         output = traceback.format_exception(exc_type, exc_value, exc_traceback)
         output = [i[:-1].translate({ord('\n'): ':'}) for i in output]
@@ -207,20 +205,20 @@ def intro(version=0):
 def init():
     global clock
     clock = pygame.time.Clock()
-    global chara
     chara = frisk.Frisk()
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
+    globals.chara = chara
     global running
     running = True
     global room
-    room = rooms.Room_TEST1()
+    room = rooms.Room_Unwalkable_Test()
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
 
 
 def spritecycle():
-    global chara
+    chara = globals.chara
     scale_factor = 2
     upcycle = [scale(pygame.image.load("sprites/spr_maincharau_" + str(i) + ".png"), scale_factor) for i in range(4)]
     down_cycle = [scale(pygame.image.load("sprites/spr_maincharad_" + str(i) + ".png"), scale_factor) for i in range(4)]
@@ -241,49 +239,12 @@ def spritecycle():
 
 
 def maincycle():
-    global chara
+    chara = globals.chara
     sprite_cycle = threading.Thread(target=spritecycle)
     sprite_cycle.start()
     pygame.time.wait(250)
     while running:
-        d.fill(pygame.Color('black'))
         room.draw()
-        d.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
-                if event.key == pygame.K_RETURN or event.key == pygame.K_z:
-                    for i in room.objects:
-                        if int(math.fabs(i.x - chara.x) * 2) + int(math.fabs(
-                                i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
-                            i.interact(chara)
-                            break
-        keys_pressed = pygame.key.get_pressed()
-        chara.moving = False
-        if keys_pressed[K_LEFT]:
-            chara.dir = 3
-            chara.moving = True
-            chara.pos = (chara.pos[0] - 0.5, chara.pos[1])
-        if keys_pressed[K_RIGHT]:
-            chara.dir = 1
-            chara.moving = True
-            chara.pos = (chara.pos[0] + 0.5, chara.pos[1])
-        if keys_pressed[K_UP]:
-            chara.dir = 0
-            chara.moving = True
-            chara.pos = (chara.pos[0], chara.pos[1] - 0.5)
-        if keys_pressed[K_DOWN]:
-            chara.dir = 2
-            chara.moving = True
-            chara.pos = (chara.pos[0], chara.pos[1] + 0.5)
-        pygame.display.update()
-        if not int(chara.pos[0]) in range(646) or not int(chara.pos[1]) in range(505):
-            raise NotImplementedError("chara left screen area", 1)
 
 
 class UndertaleError(Exception):

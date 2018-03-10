@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # coding=utf-8
 import pygame
+import frisk
 
 DEBUG = True
 
@@ -12,6 +13,5 @@ left = pygame.K_LEFT
 right = pygame.K_RIGHT
 down = pygame.K_DOWN
 
-
-
-display = pygame.Surface((1,1))
+chara = frisk.Frisk()
+display = pygame.Surface((1, 1))
