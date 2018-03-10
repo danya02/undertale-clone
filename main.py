@@ -6,7 +6,7 @@ import sys
 import gzip
 import threading
 import math
-import sprite
+import traceback
 
 # our modules are imported below the invoke_dog function
 import typer
@@ -29,7 +29,7 @@ def scale(img, times):
     return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
 
 
-def invoke_dog(text="", kind=0):
+def invoke_dog(text=None, kind=0):
     """
     Show the Annoying Dog with optional text until user quits.
     Use this as a fatal error handler, or if the SAVE file is FUBAR.
@@ -67,16 +67,43 @@ def invoke_dog(text="", kind=0):
         pygame.mixer.music.load(["mus/mus_dance_of_dog.ogg", "mus/mus_sigh_of_dog.ogg"][kind])
     except pygame.error:
         pass
-    length = 1000
-    height = 33
-    while not length < 505:
-        height -= 1
-        try:
-            font = pygame.font.Font("fonts/determinationmono.ttf", height)
-        except OSError:
-            font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
-        text_obj = font.render(text, 0, pygame.Color('white'))
-        length = text_obj.get_width()
+    text_obj = pygame.Surface((1, 1))
+    text_objs = []
+    scrollable = False
+    cursor = 0
+    if isinstance(text, str):
+        length = 1000
+        height = 33
+        while not length < 800:
+            height -= 1
+            try:
+                font = pygame.font.Font("fonts/determinationmono.ttf", height)
+            except OSError:
+                font = pygame.font.SysFont(pygame.font.get_default_font(), height)
+            text_obj = font.render(text, 0, pygame.Color('white'))
+            length = text_obj.get_width()
+    elif isinstance(text, list):
+        for i in text:
+            length = 1000
+            height = 33
+            while not length < 800:
+                height -= 1
+                try:
+                    font = pygame.font.Font("fonts/determinationmono.ttf", height)
+                except OSError:
+                    font = pygame.font.SysFont(pygame.font.get_default_font(), height)
+                text_obj = font.render(i, 0, pygame.Color('white'))
+                length = text_obj.get_width()
+            text_objs += [text_obj]
+        scrollable = len(text_objs) != 0
+        text_obj = text_objs[0]
+
+    try:
+        font = pygame.font.Font("fonts/determinationmono.ttf", 32)
+    except OSError:
+        font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
+    left_pointer = font.render('<', 0, pygame.Color('white'))
+    right_pointer = font.render('>', 0, pygame.Color('white'))
 
     try:
         pygame.mixer.music.play(-1)
@@ -92,16 +119,53 @@ def invoke_dog(text="", kind=0):
                     if event.key == K_ESCAPE:
                         pygame.quit()
                         sys.exit()
+                    elif event.key == K_LEFT:
+                        cursor = max(cursor - 1, 0)
+                    elif event.key == K_RIGHT:
+                        cursor = min(cursor + 1, len(text_objs) - 1)
+            try:
+                text_obj = text_objs[cursor]
+            except IndexError:
+                pass
+
             d.fill(pygame.Color('black'))
             d.blit([s1, s3][kind],
-                   (323 - int([s1, s3][kind].get_width() / 2), 252 - int([s1, s3][kind].get_height() / 2)))
-            d.blit(text_obj, (252 - int(text_obj.get_width() / 2), 350))
+                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+            if scrollable:
+                if cursor > 0:
+                    d.blit(left_pointer, (50, 500))
+                if cursor < len(text_objs) - 1:
+                    d.blit(right_pointer, (750, 500))
+
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.key == K_LEFT:
+                        cursor = max(cursor - 1, 0)
+                    elif event.key == K_RIGHT:
+                        cursor = min(cursor + 1, len(text_objs) - 1)
+            try:
+                text_obj = text_objs[cursor]
+            except IndexError:
+                pass
+
             d.fill(pygame.Color('black'))
             d.blit([s2, s4][kind],
-                   (323 - int([s1, s3][kind].get_width() / 2), 252 - int([s1, s3][kind].get_height() / 2)))
-            d.blit(text_obj, (252 - int(text_obj.get_width() / 2), 350))
+                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+            if scrollable:
+                if cursor > 0:
+                    d.blit(left_pointer, (50, 500))
+                if cursor < len(text_objs) - 1:
+                    d.blit(right_pointer, (750, 500))
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
     except pygame.error:
@@ -113,16 +177,19 @@ if __name__ == "__main__":
     try:
         import frisk
         import rooms
+        import sprite
         import menu
         import globals
     except ImportError as e:
         frisk = None
         rooms = None
+        sprite = None
         menu = None
-        globals = None
-        invoke_dog("ImportError: " + str(e))
-    d = pygame.display.set_mode((646, 505))
-    globals.display = d
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        output = traceback.format_exception(exc_type, exc_value, exc_traceback)
+        output = [i[:-1].translate({ord('\n'): ':'}) for i in output]
+        output = list(reversed(output))[:-1]
+        invoke_dog(output)
 
 
 def intro(version=0):
@@ -237,20 +304,16 @@ if __name__ == "__main__":
             intro()
         maincycle()
     except UndertaleError as e:
-        try:
+        if len(e.args) > 0:
             invoke_dog("", e.args[0])
-        except IndexError:
+        else:
             invoke_dog()
     except:
-        e = sys.exc_info()
-        try:
-            invoke_dog(type(e[1]).__name__ + ": " + str(eval(str(e[1]))[0]), int(eval(str(e[1]))[1]))
-        except SystemExit:
-            sys.exit()
-        except ValueError:
-            invoke_dog(type(e[1]).__name__ + ": " + str(e[1]))
-        except SyntaxError:
-            invoke_dog(type(e[1]).__name__ + ": " + str(e[1]))
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        output = traceback.format_exception(exc_type, exc_value, exc_traceback)
+        output = [i[:-1].translate({ord('\n'): ':'}) for i in output]
+        output = list(reversed(output))[:-1]
+        invoke_dog(output)
 
     finally:
         running = False
