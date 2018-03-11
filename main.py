@@ -9,7 +9,7 @@ import math
 import traceback
 
 # our modules are imported below the invoke_dog function
-import typer
+
 
 global clock
 clock = None
@@ -127,7 +127,8 @@ def invoke_dog(text=None, kind=0):
             globals.display.fill(pygame.Color('black'))
             globals.display.blit([s1, s3][kind],
                                  (
-                                 400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+                                     400 - int([s1, s3][kind].get_width() / 2),
+                                     300 - int([s1, s3][kind].get_height() / 2)))
             globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             if scrollable:
                 if cursor > 0:
@@ -157,7 +158,8 @@ def invoke_dog(text=None, kind=0):
             globals.display.fill(pygame.Color('black'))
             globals.display.blit([s2, s4][kind],
                                  (
-                                 400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+                                     400 - int([s1, s3][kind].get_width() / 2),
+                                     300 - int([s1, s3][kind].get_height() / 2)))
             globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             if scrollable:
                 if cursor > 0:
@@ -173,11 +175,13 @@ def invoke_dog(text=None, kind=0):
 
 if __name__ == "__main__":
     try:
+        import globals
         import frisk
         import rooms
         import sprite
         import menu
-        import globals
+        import sfx
+        import typer
 
         globals.display = pygame.display.set_mode((646, 505))
     except ImportError as e:
@@ -186,6 +190,8 @@ if __name__ == "__main__":
         sprite = None
         menu = None
         globals = None
+        sfx = None
+        typer = None
         exc_type, exc_value, exc_traceback = sys.exc_info()
         output = traceback.format_exception(exc_type, exc_value, exc_traceback)
         output = [i[:-1].translate({ord('\n'): ':'}) for i in output]
@@ -243,7 +249,8 @@ def maincycle():
     sprite_cycle.start()
     pygame.time.wait(250)
     while globals.running:
-        room.draw()
+        if globals.room:
+            globals.room.draw()
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ def normal():
             image.update(True)
     pygame.mixer.music.load("mus/mus_intronoise.ogg")
     i = pygame.image.load("sprites/splash.png")
-    i = scale(i, 2.5)
+    i = scale(i, 2)
     globals.display.blit(i, (323 - (i.get_width() / 2), 252 - (i.get_height() / 2)))
     pygame.display.update()
     pygame.mixer.music.play()
