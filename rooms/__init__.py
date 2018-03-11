@@ -93,4 +93,4 @@ class Room_Unwalkable_Test(Room):
 
 
 def get_room(room: int):  # TODO: implement this.
-    return Room()
+    return Room_TEST1()

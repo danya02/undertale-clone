@@ -126,7 +126,8 @@ def invoke_dog(text=None, kind=0):
 
             globals.display.fill(pygame.Color('black'))
             globals.display.blit([s1, s3][kind],
-                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+                                 (
+                                 400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
             globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             if scrollable:
                 if cursor > 0:
@@ -155,7 +156,8 @@ def invoke_dog(text=None, kind=0):
 
             globals.display.fill(pygame.Color('black'))
             globals.display.blit([s2, s4][kind],
-                   (400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
+                                 (
+                                 400 - int([s1, s3][kind].get_width() / 2), 300 - int([s1, s3][kind].get_height() / 2)))
             globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
             if scrollable:
                 if cursor > 0:
@@ -176,7 +178,8 @@ if __name__ == "__main__":
         import sprite
         import menu
         import globals
-        globals.display = pygame.display.set_mode((646,505))
+
+        globals.display = pygame.display.set_mode((646, 505))
     except ImportError as e:
         frisk = None
         rooms = None
@@ -209,10 +212,7 @@ def init():
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
-    global running
-    running = True
-    global room
-    room = rooms.Room_Unwalkable_Test()
+    globals.room = rooms.get_room(0)
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
 
@@ -239,20 +239,11 @@ def spritecycle():
 
 
 def maincycle():
-    chara = globals.chara
     sprite_cycle = threading.Thread(target=spritecycle)
     sprite_cycle.start()
     pygame.time.wait(250)
-    while running:
+    while globals.running:
         room.draw()
-
-
-class UndertaleError(Exception):
-    """
-    Class for fatal errors that bring forth the Dog, but with no text.
-    Use when the SAVE is FUBAR, or when the room is in the Dogcheck.
-    """
-    pass
 
 
 if __name__ == "__main__":
@@ -264,7 +255,7 @@ if __name__ == "__main__":
         except FileNotFoundError:
             intro()
         maincycle()
-    except UndertaleError as e:
+    except globals.UndertaleError as e:
         if len(e.args) > 0:
             invoke_dog("", e.args[0])
         else:
@@ -277,4 +268,4 @@ if __name__ == "__main__":
         invoke_dog(output)
 
     finally:
-        running = False
+        globals.running = False

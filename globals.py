@@ -13,5 +13,14 @@ left = pygame.K_LEFT
 right = pygame.K_RIGHT
 down = pygame.K_DOWN
 
+running = True  # DO NOT SET THIS TO `False` to avoid UNDOCUMENTED BAD STUFF.
 chara = frisk.Frisk()
 display = pygame.Surface((1, 1))
+
+
+class UndertaleError(Exception):
+    """
+    Class for fatal errors that bring forth the Dog, but with no text.
+    Use when the SAVE is FUBAR, or when the room is in the Dogcheck.
+    """
+    pass

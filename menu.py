@@ -138,7 +138,7 @@ def gone():
     def eternal():
         text = ['Then stay here for&all eternity./','']
         mt = create(text)
-        s, choice = mt.run()
+        mt.run()
         globals.display.fill(pygame.Color('black'))
         pygame.display.flip()
         while 1:
@@ -152,7 +152,7 @@ def gone():
             text = ['.../',
                     'Then^1, it is done./']
             mt = create(text)
-            s, choice = mt.run()
+            mt.run()
             try:
                 os.remove('system_information_962')
             except FileNotFoundError:

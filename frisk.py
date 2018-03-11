@@ -2,7 +2,7 @@
 # coding=utf-8
 import item
 import sprite
-import main
+import globals
 import item
 import rooms
 import configparser
@@ -208,18 +208,18 @@ class Frisk:
                 self.menuchoice[j] = int(k)
             self.currentsong = int(i[547])  # TODO: figure out how to define songs.
             if int(i[547]) in list(range(0, 5)) + list(range(239, 264)) + list(range(239, 264)):
-                raise main.UndertaleError
+                raise globals.UndertaleError
             self.room = rooms.get_room(int(i[547]))
             self.time = int(i[549])
             self.custom_data = i[550:]
         except:
-            raise main.UndertaleError
+            raise globals.UndertaleError
 
     def get_ini_value(self, section: str, option: str, kind=None):
         """
         Return a value contained in the INI file.
         section and option are strings.
-        type can be a bool, an int or a float, and if so, return the corresponding type.
+        kind can be a bool, an int or a float, and if so, return the corresponding type.
         If it is None, return an str.
         If the INI doesn't exist, or the corresponding section or option are missing, return None.
         """
