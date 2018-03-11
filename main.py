@@ -1,12 +1,10 @@
 #!/usr/bin/python3
 # coding=utf-8
+import gzip
+import sys
+import traceback
 import pygame
 from pygame.locals import *
-import sys
-import gzip
-import threading
-import math
-import traceback
 
 # our modules are imported below the invoke_dog function
 
@@ -223,31 +221,9 @@ def init():
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
 
 
-def spritecycle():
-    chara = globals.chara
-    scale_factor = 2
-    upcycle = [scale(pygame.image.load("sprites/spr_maincharau_" + str(i) + ".png"), scale_factor) for i in range(4)]
-    down_cycle = [scale(pygame.image.load("sprites/spr_maincharad_" + str(i) + ".png"), scale_factor) for i in range(4)]
-    left_cycle = [scale(pygame.image.load("sprites/spr_maincharal_" + str(i) + ".png"), scale_factor) for i in range(2)]
-    right_cycle = [scale(pygame.image.load("sprites/spr_maincharar_" + str(i) + ".png"), scale_factor) for i in
-                   range(2)]
-    while running:
-        chara.sprite = [upcycle, right_cycle, down_cycle, left_cycle][chara.dir][0]
-        if chara.moving:
-            for i in [upcycle, right_cycle, down_cycle, left_cycle][chara.dir]:
-                if not chara.moving:
-                    break
-                chara.sprite = i
-                for n in range(10):
-                    if not chara.moving:
-                        break
-                    clock.tick(30)
 
 
 def maincycle():
-    sprite_cycle = threading.Thread(target=spritecycle)
-    sprite_cycle.start()
-    pygame.time.wait(250)
     while globals.running:
         if globals.room:
             globals.room.draw()

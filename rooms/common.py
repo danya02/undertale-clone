@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # coding=utf-8
 import math
+import threading
+
 import pygame
 import globals
 
@@ -16,24 +18,63 @@ class Room:
         self.objects = []
         self.song = None
         self._display_ = pygame.display.get_surface()
+        self.run_update = True
+        self.update_thread = threading.Thread(target=self.update_loop,name='update loop for {}'.format(self.__class__.__name__),daemon=True)
+        self.update_thread.start()
+
+    def __del__(self):
+        self.run_update = False
 
     def draw(self):
-        self._display_.fill(pygame.Color('black'))
+        self._display_.fill(pygame.Color('gray'))
         self._display_.blit(self.background, self.bg_pan)
         for i in self.objects:
             i.sprite.update()
             self._display_.blit(i.sprite.image, i.pos)
         pygame.display.flip()
 
+    def update_loop(self):
+        pass
+
 
 class RoomWalkable(Room):
     def __init__(self):
-        super(Room, self).__init__()
+        Room.__init__(self)
+        self.clock = pygame.time.Clock()
+        self.chara = globals.chara
+        self.walk_animate_init()
+        self.walk_tick = 0
+
+    def walk_animate_init(self):
+        scale_factor = 2
+
+        def scale(img, times):
+            return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
+
+        self.upcycle = [scale(pygame.image.load("sprites/spr_maincharau_" + str(i) + ".png"), scale_factor) for i in
+                        range(4)]
+        self.down_cycle = [scale(pygame.image.load("sprites/spr_maincharad_" + str(i) + ".png"), scale_factor) for i in
+                           range(4)]
+        self.left_cycle = [scale(pygame.image.load("sprites/spr_maincharal_" + str(i) + ".png"), scale_factor) for i in
+                           range(2)]
+        self.right_cycle = [scale(pygame.image.load("sprites/spr_maincharar_" + str(i) + ".png"), scale_factor) for i in
+                            range(2)]
+
+    def walk_animate_loop(self):
+        chara = self.chara
+        chara.sprite = [self.upcycle, self.right_cycle, self.down_cycle, self.left_cycle][chara.dir][0]
+        if chara.moving:
+            self.walk_tick += 1
+            if self.walk_tick % 10 == 0:
+                for i in [self.upcycle, self.right_cycle, self.down_cycle, self.left_cycle][chara.dir]:
+                    chara.sprite = i
 
     def draw(self):
         super(RoomWalkable, self).draw()
-        chara = globals.chara
+        chara = self.chara
+        self.walk_animate_loop()
         globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
+        pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 globals.quit()
@@ -47,23 +88,25 @@ class RoomWalkable(Room):
                             i.interact(chara)
                             break
         keys_pressed = pygame.key.get_pressed()
-        chara.moving = False
         if keys_pressed[pygame.K_LEFT]:
             chara.dir = 3
             chara.moving = True
             chara.pos = (chara.pos[0] - 0.5, chara.pos[1])
-        if keys_pressed[pygame.K_RIGHT]:
+        elif keys_pressed[pygame.K_RIGHT]:
             chara.dir = 1
             chara.moving = True
             chara.pos = (chara.pos[0] + 0.5, chara.pos[1])
-        if keys_pressed[pygame.K_UP]:
+        elif keys_pressed[pygame.K_UP]:
             chara.dir = 0
             chara.moving = True
             chara.pos = (chara.pos[0], chara.pos[1] - 0.5)
-        if keys_pressed[pygame.K_DOWN]:
+        elif keys_pressed[pygame.K_DOWN]:
             chara.dir = 2
             chara.moving = True
             chara.pos = (chara.pos[0], chara.pos[1] + 0.5)
+        else:
+            chara.moving = False
+        self.clock.tick(30)
         pygame.display.update()
         if not int(chara.pos[0]) in range(646) or not int(chara.pos[1]) in range(505):
             raise NotImplementedError("chara left screen area", 1)

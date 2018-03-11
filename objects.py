@@ -54,7 +54,7 @@ class TestMovingObject(Object):
         super(TestMovingObject, self).__init__(pos)
         self.centerpos = pos
         self.run = True
-        self.motion = threading.Thread(target=self.motionloop,name='motion of {}'.format(str(self.__class__)),daemon=True)
+        self.motion = threading.Thread(target=self.motionloop,name='motion of {}'.format(str(self.__class__.__name__)),daemon=True)
         self.motion.start()
         self.sprite = sprite.get_dynamic_sprite("spr_tobdogl", scale_value=4)
         self.sprite.delay = 50

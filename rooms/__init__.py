@@ -5,4 +5,4 @@ from rooms.tests import *
 
 
 def get_room(room: int):  # TODO: implement this.
-    return Room_TEST1()
+    return Room_Unwalkable_Test()
