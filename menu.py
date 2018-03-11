@@ -149,16 +149,16 @@ def gone():
         mt = create(text)
         s, choice = mt.run()
         if choice == typer.Typer.CHOICE1:
-            text = ['.../',
-                    'Then^1, it is done./']
-            mt = create(text)
-            mt.run()
             try:
                 os.remove('system_information_962')
             except FileNotFoundError:
                 pass
             with open('system_information_963', 'w') as a:
                 a.write('a')
+            text = ['.../',
+                    'Then^1, it is done./']
+            mt = create(text)
+            mt.run()
             os.abort()
         else:
             eternal()
