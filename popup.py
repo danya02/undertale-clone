@@ -35,7 +35,7 @@ class SAVEPopup(Popup):
 
         self.text_name = font.render(globals.chara.charname)
         self.text_lv = font.render('LV {}'.format(str(globals.chara.lv)))
-        self.text_time = font.render('Fix:Me')  # TODO: add time rendering to here
+        self.text_time = font.render(globals.chara.get_play_time())
         self.text_location = font.render('Minus World')  # TODO: add reference to room
         self.text_save = font.render('Save')
         self.text_return = font.render('Return')
@@ -56,7 +56,7 @@ class SAVEPopup(Popup):
 
     def on_button(self, button):
         self.dirty = True
-        if button==globals.left or button==globals.right:
+        if button == globals.left or button == globals.right:
             self.cursor = 2 if self.cursor == 1 else 1
         elif button in globals.cancel:
             self.surface = pygame.Surface((0, 0))
@@ -67,16 +67,16 @@ class SAVEPopup(Popup):
                 self.finished = True
             else:
                 if not self.saved:
+                    globals.chara.save('')
                     self.text_name = font.render(globals.chara.charname, color=pygame.Color(255, 255, 0, 255))
                     self.text_lv = font.render('LV {}'.format(str(globals.chara.lv)),
                                                color=pygame.Color(255, 255, 0, 255))
-                    self.text_time = font.render('Fix:Me', color=pygame.Color(255, 255, 0,
-                                                                              255))  # TODO: add time rendering to here
+                    self.text_time = font.render(globals.chara.get_play_time(), color=pygame.Color(255, 255, 0, 255))
                     self.text_location = font.render('Minus World', color=pygame.Color(255, 255, 0,
                                                                                        255))  # TODO: add reference to room
                     self.text_save = font.render('File saved.', color=pygame.Color(255, 255, 0, 255))
                     self.text_return = pygame.Surface((0, 0))
-                    self.heart.image= pygame.Surface((0, 0))
+                    self.heart.image = pygame.Surface((0, 0))
                     self.saved = True
                 else:
                     self.surface = pygame.Surface((0, 0))

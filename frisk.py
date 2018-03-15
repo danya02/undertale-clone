@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 # coding=utf-8
-import item
-import sprite
+import configparser
+
 import globals
 import item
 import rooms
-import configparser
+import sprite
 
 
 class Frisk:
@@ -58,7 +58,7 @@ class Frisk:
         self.pos = (400, 300)
         self.x = 400
         self.y = 300
-        self.movespeed=5
+        self.movespeed = 5
         self.dir = 2
         self.sprites = [sprite.DynamicSprite('spr_maincharau'), sprite.DynamicSprite('spr_maincharar'),
                         sprite.DynamicSprite('spr_maincharad'), sprite.DynamicSprite('spr_maincharal')]
@@ -103,6 +103,9 @@ class Frisk:
             return 1
         return 0
 
+    def get_play_time(self):
+        return '{}:{}'.format(*divmod(int(self.time), 60))
+
     def save(self, file: str = None):
         """
         "You're filled with determination..."
@@ -112,6 +115,8 @@ class Frisk:
         If the string is empty, write to the default file (file0).
         If no params, return the string that would have been written.
         """
+        self.time = globals.time
+        self.room = globals.room.id
         o = ["0"] * 550
         o[1] = self.charname
         o[2] = self.lv
@@ -210,8 +215,10 @@ class Frisk:
             self.currentsong = int(i[547])  # TODO: figure out how to define songs.
             if int(i[547]) in list(range(0, 5)) + list(range(239, 264)) + list(range(239, 264)):
                 raise globals.UndertaleError
-            self.room = rooms.get_room(int(i[547]))
+            self.room = int(i[547])
             self.time = int(i[549])
+            globals.time = self.time
+            globals.room = rooms.get_room(self.room)
             self.custom_data = i[550:]
         except:
             raise globals.UndertaleError

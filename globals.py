@@ -26,6 +26,8 @@ event_lock = False
 chara = frisk.Frisk()
 display = pygame.Surface((1, 1))
 room = rooms.Room()
+time = 0
+start_time = 0.0
 
 
 def quit():  # TODO: expand to make quitting safer.

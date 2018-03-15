@@ -3,6 +3,7 @@
 import gzip
 import sys
 import traceback
+import time
 import pygame
 from pygame.locals import *
 
@@ -210,6 +211,7 @@ def intro(version=0):
 
 
 def init():
+    globals.start_time = time.time()
     global clock
     clock = pygame.time.Clock()
     chara = frisk.Frisk()
@@ -227,6 +229,7 @@ def maincycle():
     while globals.running:
         if globals.room:
             globals.room.draw()
+            globals.time = int(time.time()-globals.start_time)
 
 
 if __name__ == "__main__":
