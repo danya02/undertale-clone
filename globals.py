@@ -15,7 +15,14 @@ right = pygame.K_RIGHT
 down = pygame.K_DOWN
 arrows = [up, left, right, down]
 
-running = True  # DO NOT SET THIS TO `False` to avoid UNDOCUMENTED BAD STUFF.
+width=646
+height=505
+center=(int(width/2),int(height/2))
+
+# DO NOT CHANGE THESE to avoid UNDOCUMENTED BAD STUFF.
+running = True
+event_lock = False
+
 chara = frisk.Frisk()
 display = pygame.Surface((1, 1))
 room = rooms.Room()

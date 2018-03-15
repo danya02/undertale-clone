@@ -75,37 +75,38 @@ class RoomWalkable(Room):
         self.walk_animate_loop()
         globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
         pygame.display.flip()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                globals.quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+        if not globals.event_lock:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     globals.quit()
-                if event.key == pygame.K_RETURN or event.key == pygame.K_z:
-                    for i in self.objects:
-                        if int(math.fabs(i.x - chara.x) * 2) + int(
-                                math.fabs(i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
-                            i.interact(chara)
-                            break
-        keys_pressed = pygame.key.get_pressed()
-        if keys_pressed[pygame.K_LEFT]:
-            chara.dir = 3
-            chara.moving = True
-            chara.pos = (chara.pos[0] - 0.5, chara.pos[1])
-        elif keys_pressed[pygame.K_RIGHT]:
-            chara.dir = 1
-            chara.moving = True
-            chara.pos = (chara.pos[0] + 0.5, chara.pos[1])
-        elif keys_pressed[pygame.K_UP]:
-            chara.dir = 0
-            chara.moving = True
-            chara.pos = (chara.pos[0], chara.pos[1] - 0.5)
-        elif keys_pressed[pygame.K_DOWN]:
-            chara.dir = 2
-            chara.moving = True
-            chara.pos = (chara.pos[0], chara.pos[1] + 0.5)
-        else:
-            chara.moving = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        globals.quit()
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_z:
+                        for i in self.objects:
+                            if int(math.fabs(i.x - chara.x) * 2) + int(
+                                    math.fabs(i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
+                                i.interact(chara)
+                                break
+            keys_pressed = pygame.key.get_pressed()
+            if keys_pressed[pygame.K_LEFT]:
+                chara.dir = 3
+                chara.moving = True
+                chara.pos = (chara.pos[0] - chara.movespeed, chara.pos[1])
+            elif keys_pressed[pygame.K_RIGHT]:
+                chara.dir = 1
+                chara.moving = True
+                chara.pos = (chara.pos[0] + chara.movespeed, chara.pos[1])
+            elif keys_pressed[pygame.K_UP]:
+                chara.dir = 0
+                chara.moving = True
+                chara.pos = (chara.pos[0], chara.pos[1] - chara.movespeed)
+            elif keys_pressed[pygame.K_DOWN]:
+                chara.dir = 2
+                chara.moving = True
+                chara.pos = (chara.pos[0], chara.pos[1] + chara.movespeed)
+            else:
+                chara.moving = False
         self.clock.tick(30)
         pygame.display.update()
         if not int(chara.pos[0]) in range(646) or not int(chara.pos[1]) in range(505):

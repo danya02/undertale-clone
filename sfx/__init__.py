@@ -7,7 +7,10 @@ sounds = {}
 LOADED = False
 try:
     for i in os.listdir('./sfx/'):
-        sounds.update({int(i.split('.')[0], 16): pygame.mixer.Sound('./sfx/' + i)})
+        try:
+            sounds.update({int(i.split('.')[0], 16): pygame.mixer.Sound('./sfx/' + i)})
+        except ValueError:
+            pass
         LOADED = True
 except pygame.error:
     pass

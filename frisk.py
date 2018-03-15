@@ -58,6 +58,7 @@ class Frisk:
         self.pos = (400, 300)
         self.x = 400
         self.y = 300
+        self.movespeed=5
         self.dir = 2
         self.sprites = [sprite.DynamicSprite('spr_maincharau'), sprite.DynamicSprite('spr_maincharar'),
                         sprite.DynamicSprite('spr_maincharad'), sprite.DynamicSprite('spr_maincharal')]

@@ -10,7 +10,7 @@ class Room_TEST1(RoomWalkable):
     def __init__(self):
         RoomWalkable.__init__(self)
         self._display_ = pygame.display.get_surface()
-        self.objects = [objects.RaiseException((100, 100)), objects.TestSAVEPoint((200, 200))]
+        self.objects = [objects.RaiseException((100, 100)), objects.SAVEPoint((200, 200))]
 
 
 class Room_TEST2(RoomWalkable):
