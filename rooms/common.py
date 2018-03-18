@@ -13,6 +13,7 @@ class Room:
 
     def __init__(self, *args):
         self.id = 0
+        self.name = ''
         self.background = pygame.Surface((800, 600))
         self.bg_pan = (0, 0)
         self.objects = []

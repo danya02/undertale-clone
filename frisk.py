@@ -117,6 +117,7 @@ class Frisk:
         """
         self.time = globals.time
         self.room = globals.room.id
+        globals.last_save_room_name = globals.room.name
         o = ["0"] * 550
         o[1] = self.charname
         o[2] = self.lv
@@ -219,6 +220,7 @@ class Frisk:
             self.time = int(i[549])
             globals.time = self.time
             globals.room = rooms.get_room(self.room)
+            globals.last_save_room_name = globals.room.name
             self.custom_data = i[550:]
         except:
             raise globals.UndertaleError

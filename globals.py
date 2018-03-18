@@ -26,6 +26,7 @@ event_lock = False
 chara = frisk.Frisk()
 display = pygame.Surface((1, 1))
 room = rooms.Room()
+last_save_room_name = ''
 time = 0
 start_time = 0.0
 

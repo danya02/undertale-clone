@@ -4,6 +4,7 @@ import pygame
 import globals
 import sprite
 import font
+import typer
 
 
 class Popup:
@@ -36,7 +37,7 @@ class SAVEPopup(Popup):
         self.text_name = font.render(globals.chara.charname)
         self.text_lv = font.render('LV {}'.format(str(globals.chara.lv)))
         self.text_time = font.render(globals.chara.get_play_time())
-        self.text_location = font.render('Minus World')  # TODO: add reference to room
+        self.text_location = font.render(globals.last_save_room_name)
         self.text_save = font.render('Save')
         self.text_return = font.render('Return')
         self.heart = sprite.get_sprite('spr_heart')
@@ -72,8 +73,7 @@ class SAVEPopup(Popup):
                     self.text_lv = font.render('LV {}'.format(str(globals.chara.lv)),
                                                color=pygame.Color(255, 255, 0, 255))
                     self.text_time = font.render(globals.chara.get_play_time(), color=pygame.Color(255, 255, 0, 255))
-                    self.text_location = font.render('Minus World', color=pygame.Color(255, 255, 0,
-                                                                                       255))  # TODO: add reference to room
+                    self.text_location = font.render(globals.last_save_room_name, color=pygame.Color(255, 255, 0, 255))
                     self.text_save = font.render('File saved.', color=pygame.Color(255, 255, 0, 255))
                     self.text_return = pygame.Surface((0, 0))
                     self.heart.image = pygame.Surface((0, 0))

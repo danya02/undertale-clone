@@ -9,6 +9,7 @@ from rooms.common import Room, RoomWalkable
 class Room_TEST1(RoomWalkable):
     def __init__(self):
         RoomWalkable.__init__(self)
+        self.name = 'Test Room 1'
         self._display_ = pygame.display.get_surface()
         self.objects = [objects.RaiseException((100, 100)), objects.SAVEPoint((200, 200))]
 
@@ -16,6 +17,7 @@ class Room_TEST1(RoomWalkable):
 class Room_TEST2(RoomWalkable):
     def __init__(self):
         RoomWalkable.__init__(self)
+        self.name = 'Test Room 2'
         self.background.fill(pygame.Color(127, 127, 127, 255))
         self._display_ = pygame.display.get_surface()
         self.objects = [objects.RaiseException((100, 100))]
@@ -35,12 +37,12 @@ class Room_Unwalkable_Test(Room):
         self.fade_direction = 1
 
     def update_loop(self):
-        self.fade_phase=0
-        self.fade_direction=1
+        self.fade_phase = 0
+        self.fade_direction = 1
         while self.run_update:
             self.fade_phase += self.fade_direction
             if self.fade_phase >= 255:
                 self.fade_direction = -1
             elif self.fade_phase <= 0:
                 self.fade_direction = 1
-            self.background.fill(pygame.Color(self.fade_phase, abs(self.fade_phase-127), 255-self.fade_phase))
+            self.background.fill(pygame.Color(self.fade_phase, abs(self.fade_phase - 127), 255 - self.fade_phase))
