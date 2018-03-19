@@ -7,7 +7,6 @@ import pygame
 import globals
 import popup
 import sprite
-import sfx
 
 
 class Object:
@@ -46,7 +45,7 @@ class SAVEPoint(Object): # TODO: add additional text before showing popup.
         super(SAVEPoint, self).__init__(pos)
         self.sprite = sprite.get_dynamic_sprite("spr_savepoint", scale_value=2)
         self.sprite.delay = 100
-        self.popup = popup.SAVEPopup()
+        #self.popup = popup.SAVEPopup()
         self.thread = None
         # self.sprite.start()
 
@@ -61,7 +60,6 @@ class SAVEPoint(Object): # TODO: add additional text before showing popup.
         globals.event_lock = False
 
     def interact(self, chara):
-        sfx.get_sound(0x29fb).play()
         self.thread = threading.Thread(target=self.popup_worker, daemon=True,
                                        name='popup worker for {}'.format(self.__class__.__name__))
         self.thread.start()

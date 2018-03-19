@@ -5,7 +5,7 @@ import globals
 import sprite
 import font
 import typer
-
+import sfx
 
 class Popup:
     def __init__(self):
@@ -41,6 +41,7 @@ class SAVEPopup(Popup):
         self.text_save = font.render('Save')
         self.text_return = font.render('Return')
         self.heart = sprite.get_sprite('spr_heart')
+        sfx.get_sound(0x29fb).play()
 
     def update(self):
         if self.dirty and not self.finished:
@@ -68,6 +69,7 @@ class SAVEPopup(Popup):
                 self.finished = True
             else:
                 if not self.saved:
+                    sfx.get_sound(0x29a7).play()
                     globals.chara.save('')
                     self.text_name = font.render(globals.chara.charname, color=pygame.Color(255, 255, 0, 255))
                     self.text_lv = font.render('LV {}'.format(str(globals.chara.lv)),

@@ -215,6 +215,7 @@ def init():
     global clock
     clock = pygame.time.Clock()
     chara = frisk.Frisk()
+    chara.load('file0')
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
