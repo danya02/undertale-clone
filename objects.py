@@ -30,6 +30,9 @@ class Object:
     def interact(self, chara):
         pass
 
+    def redraw(self):
+        pass
+
 
 class RaiseException(Object):
     def __init__(self, pos):
@@ -45,7 +48,7 @@ class SAVEPoint(Object): # TODO: add additional text before showing popup.
         super(SAVEPoint, self).__init__(pos)
         self.sprite = sprite.get_dynamic_sprite("spr_savepoint", scale_value=2)
         self.sprite.delay = 100
-        #self.popup = popup.SAVEPopup()
+        self.popup = None
         self.thread = None
         # self.sprite.start()
 
@@ -53,11 +56,15 @@ class SAVEPoint(Object): # TODO: add additional text before showing popup.
         globals.event_lock = True
         self.popup = popup.SAVEPopup()
         while not self.popup.finished:
-            self.popup.draw()
             for i in pygame.event.get():
                 if i.type == pygame.KEYDOWN:
                     self.popup.on_button(i.key)
         globals.event_lock = False
+
+    def redraw(self):
+      if self.popup is not None:
+          if not self.popup.finished:
+              self.popup.draw()
 
     def interact(self, chara):
         self.thread = threading.Thread(target=self.popup_worker, daemon=True,

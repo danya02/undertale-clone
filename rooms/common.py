@@ -30,6 +30,7 @@ class Room:
         self._display_.fill(pygame.Color('gray'))
         self._display_.blit(self.background, self.bg_pan)
         for i in self.objects:
+            i.redraw()
             i.sprite.update()
             self._display_.blit(i.sprite.image, i.pos)
         pygame.display.flip()
@@ -71,10 +72,15 @@ class RoomWalkable(Room):
                     chara.sprite = i
 
     def draw(self):
-        super(RoomWalkable, self).draw()
+        self._display_.fill(pygame.Color('gray'))
+        self._display_.blit(self.background, self.bg_pan)
         chara = self.chara
         self.walk_animate_loop()
-        globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
+        for i in self.objects:
+            i.sprite.update()
+            self._display_.blit(i.sprite.image, i.pos)
+            globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
+            i.redraw()
         pygame.display.flip()
         if not globals.event_lock:
             for event in pygame.event.get():
@@ -109,6 +115,5 @@ class RoomWalkable(Room):
             else:
                 chara.moving = False
         self.clock.tick(30)
-        pygame.display.update()
         if not int(chara.pos[0]) in range(646) or not int(chara.pos[1]) in range(505):
             raise NotImplementedError("chara left screen area", 1)
