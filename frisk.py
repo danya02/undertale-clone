@@ -105,7 +105,8 @@ class Frisk:
         return 0
 
     def get_play_time(self):
-        return '{}:{}'.format(*divmod(int(self.time), 60))
+        m,s = divmod(int(self.time), 60)
+        return '{}:{}'.format(str(m).rjust(2,'0'), str(s).rjust(2,'0'))
 
     def save(self, file: str = None):
         """
@@ -219,7 +220,7 @@ class Frisk:
                 raise globals.UndertaleError
             self.room = int(i[547])
             self.time = int(i[549])
-            globals.time += self.time
+            globals.time = self.time
             globals.room = rooms.get_room(self.room)
             globals.last_save_room_name = globals.room.name
             self.custom_data = i[550:]

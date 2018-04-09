@@ -230,7 +230,6 @@ def maincycle():
     while globals.running:
         if globals.room:
             globals.room.draw()
-            globals.time = int(time.time()-globals.start_time)
 
 
 if __name__ == "__main__":
