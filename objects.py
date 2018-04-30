@@ -41,7 +41,7 @@ class RaiseException(Object):
         raise RuntimeError
 
 
-class SAVEPoint(Object): # TODO: add additional text before showing popup.
+class SAVEPoint(Object):  # TODO: add additional text before showing popup.
     def __init__(self, pos):
         super(SAVEPoint, self).__init__(pos)
         self.sprite = sprite.get_dynamic_sprite("spr_savepoint", scale_value=2)
@@ -62,6 +62,31 @@ class SAVEPoint(Object): # TODO: add additional text before showing popup.
 
     def interact(self, chara):
         sfx.get_sound(0x29fb).play()
+        self.thread = threading.Thread(target=self.popup_worker, daemon=True,
+                                       name='popup worker for {}'.format(self.__class__.__name__))
+        self.thread.start()
+
+
+class TestTextBoxObject(Object):
+    def __init__(self, pos):
+        super().__init__(pos)
+        self.sprite = sprite.get_sprite('spr_charad', 2)
+        self.popup = None
+        self.thread = None
+
+    def draw_recvd_surface(self):
+        globals.display.blit(self.popup.surface, (0, 0))  # TODO: make this more accurate. Critical.
+        pygame.display.flip()
+
+    def popup_worker(self):
+        globals.event_lock = True
+        self.popup = popup.TextPopup('Hello World!^1/', self.draw_recvd_surface)
+        self.popup.start()
+        while not self.popup.finished:
+            self.popup.draw()
+        globals.event_lock = False
+
+    def interact(self, chara):
         self.thread = threading.Thread(target=self.popup_worker, daemon=True,
                                        name='popup worker for {}'.format(self.__class__.__name__))
         self.thread.start()

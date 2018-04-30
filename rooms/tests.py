@@ -11,7 +11,8 @@ class Room_TEST1(RoomWalkable):
         RoomWalkable.__init__(self)
         self.name = 'Test Room 1'
         self._display_ = pygame.display.get_surface()
-        self.objects = [objects.RaiseException((100, 100)), objects.SAVEPoint((200, 200))]
+        self.objects = [objects.RaiseException((100, 100)), objects.SAVEPoint((200, 200)),
+                        objects.TestTextBoxObject((300, 300))]
 
 
 class Room_TEST2(RoomWalkable):

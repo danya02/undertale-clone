@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 # coding=utf-8
+import threading
+
 import pygame
 import globals
 import sprite
@@ -83,3 +85,34 @@ class SAVEPopup(Popup):
                     self.finished = True
         else:
             self.dirty = False
+
+
+class TextPopup(Popup):
+    def __init__(self, text: str, on_loop: callable = lambda: None):
+        super().__init__()
+        self.metatyper = None
+        self.text = text
+        self.surface = pygame.Surface((100,100))
+        self.on_loop = on_loop
+        self.thread = None
+        self.skips = None
+        self.choice = None
+        self.finished = None
+
+    def create_metatyper(self):
+        self.metatyper = typer.MetaTyper(self.text)
+        self.metatyper.on_loop = self.save_surface
+
+    def save_surface(self, surface: pygame.Surface):
+        self.surface.blit(surface, (0, 0))
+        self.on_loop()
+
+    def run(self):
+        self.finished = False
+        self.skips,self.choice = self.metatyper.run()
+        self.finished = True
+
+    def start(self):
+        self.create_metatyper()
+        self.thread = threading.Thread(target=self.run, name='thread for TextPopup',daemon=True)
+        self.thread.start()
