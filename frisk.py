@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # coding=utf-8
 import configparser
-
+import sys
+import traceback
 import globals
 import item
 import rooms
@@ -104,7 +105,8 @@ class Frisk:
         return 0
 
     def get_play_time(self):
-        return '{}:{}'.format(*divmod(int(self.time), 60))
+        m,s = divmod(int(self.time), 60)
+        return '{}:{}'.format(str(m).rjust(2,'0'), str(s).rjust(2,'0'))
 
     def save(self, file: str = None):
         """
@@ -214,7 +216,7 @@ class Frisk:
             for j, k in zip(range(4), i[544:547]):
                 self.menuchoice[j] = int(k)
             self.currentsong = int(i[547])  # TODO: figure out how to define songs.
-            if int(i[547]) in list(range(0, 5)) + list(range(239, 264)) + list(range(239, 264)):
+            if int(i[547]) in list(range(0, 5)) + list(range(239, 264)) + list(range(239, 264)) and not globals.DEBUG:
                 raise globals.UndertaleError
             self.room = int(i[547])
             self.time = int(i[549])
@@ -223,6 +225,11 @@ class Frisk:
             globals.last_save_room_name = globals.room.name
             self.custom_data = i[550:]
         except:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            output = traceback.format_exception(exc_type, exc_value, exc_traceback)
+            if globals.DEBUG:
+              print('Load FAILED because:')
+              print('\n'.join(output))
             raise globals.UndertaleError
 
     def get_ini_value(self, section: str, option: str, kind=None):

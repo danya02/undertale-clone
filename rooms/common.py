@@ -24,6 +24,7 @@ class Room:
         self.update_thread = threading.Thread(target=self.update_loop,
                                               name='update loop for {}'.format(self.__class__.__name__), daemon=True)
         self.update_thread.start()
+        self.c = 0
 
     def __del__(self):
         self.run_update = False
@@ -32,9 +33,15 @@ class Room:
         self._display_.fill(pygame.Color('gray'))
         self._display_.blit(self.background, self.bg_pan)
         for i in self.objects:
+            i.redraw()
             i.sprite.update()
             self._display_.blit(i.sprite.image, i.pos)
         draw.flip()
+        self.c+=1
+        if self.c>=30:
+            self.c=0
+            globals.time+=1
+        globals.clock.tick(30)
 
     def update_loop(self):
         pass
@@ -47,6 +54,7 @@ class RoomWalkable(Room):
         self.chara = globals.chara
         self.walk_animate_init()
         self.walk_tick = 0
+        self.c=0
 
     def walk_animate_init(self):
         scale_factor = 2
@@ -73,10 +81,19 @@ class RoomWalkable(Room):
                     chara.sprite = i
 
     def draw(self):
-        super(RoomWalkable, self).draw()
+        self._display_.fill(pygame.Color('gray'))
+        self._display_.blit(self.background, self.bg_pan)
         chara = self.chara
         self.walk_animate_loop()
-        globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
+        for i in self.objects:
+            i.sprite.update()
+            self._display_.blit(i.sprite.image, i.pos)
+            globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
+            i.redraw()
+        self.c+=1
+        if self.c>=30:
+            self.c=0
+            globals.time+=1
         draw.flip()
         if not globals.event_lock:
             for event in pygame.event.get():

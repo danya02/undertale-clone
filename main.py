@@ -215,6 +215,7 @@ def init():
     global clock
     clock = pygame.time.Clock()
     chara = frisk.Frisk()
+    chara.load('file0')
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
@@ -229,7 +230,6 @@ def maincycle():
     while globals.running:
         if globals.room:
             globals.room.draw()
-            globals.time = int(time.time()-globals.start_time)
 
 
 if __name__ == "__main__":
