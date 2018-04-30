@@ -17,17 +17,23 @@ class Object:
         if key == 'pos':
             object.__setattr__(self, 'x', value[0])
             object.__setattr__(self, 'y', value[1])
-            self.sprite.rect.center = value
+            try:
+                self.sprite.rect.center = value
+            except AttributeError:
+                pass
         elif key == 'x':
             object.__setattr__(self, 'pos', (value, self.pos[1]))
             self.sprite.rect.center = self.pos
         elif key == 'y':
             object.__setattr__(self, 'pos', (self.pos[0], value))
             self.sprite.rect.center = self.pos
+        elif key == 'sprite':
+            object.__setattr__(self, 'sprite', value)
+            value.rect.center = self.pos
 
     def __init__(self, pos):
-        self.sprite = sprite.StaticSprite(pygame.Surface((1, 1)), 0, 0)
         self.pos = pos
+        self.sprite = sprite.StaticSprite(pygame.Surface((1, 1)))
 
     def interact(self, chara):
         pass
@@ -48,11 +54,9 @@ class RaiseException(Object):
 class SAVEPoint(Object):  # TODO: add additional text before showing popup.
     def __init__(self, pos):
         super(SAVEPoint, self).__init__(pos)
-        self.sprite = sprite.get_dynamic_sprite("spr_savepoint", scale_value=2)
-        self.sprite.delay = 100
+        self.sprite = sprite.get_dynamic_sprite("spr_savepoint", scale_value=2, delay=15)
         self.popup = None
         self.thread = None
-        # self.sprite.start()
 
     def popup_worker(self):
         globals.event_lock = True
@@ -65,9 +69,9 @@ class SAVEPoint(Object):  # TODO: add additional text before showing popup.
         globals.event_lock = False
 
     def redraw(self):
-      if self.popup is not None:
-          if not self.popup.finished:
-              self.popup.draw()
+        if self.popup is not None:
+            if not self.popup.finished:
+                self.popup.draw()
 
     def interact(self, chara):
         sfx.get_sound(0x29fb).play()
@@ -110,8 +114,7 @@ class TestMovingObject(Object):
                                        daemon=True)
         self.motion.start()
         self.sprite = sprite.get_dynamic_sprite("spr_tobdogl", scale_value=4)
-        self.sprite.delay = 50
-        # self.sprite.start()
+        self.sprite.delay = 30
 
     def motionloop(self):
         while self.run:

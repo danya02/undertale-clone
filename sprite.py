@@ -60,11 +60,12 @@ def get_sprite(name: str, scale_value: float = 1.0) -> StaticSprite:
     return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"), scale_factor=scale_value)
 
 
-def get_dynamic_sprite(name: str, scale_value: float = 1) -> DynamicSprite:
+def get_dynamic_sprite(name: str, scale_value: float = 1, delay: int = 100) -> DynamicSprite:
     sprite_list = []
-    r = re.compile(name+'_[0-9]+.png')
+    r = re.compile(name + '_[0-9]+.png')
     for i in os.listdir(SPRITE_DIR):
         if r.match(i):
             sprite_list.append(SPRITE_DIR + i)
     sprite_list.sort(key=lambda x: float(x.strip('.png').split(name + '_')[1]))
-    return DynamicSprite([pygame.image.load(i) for i in sprite_list], scale_factor=scale_value)
+    s = DynamicSprite([pygame.image.load(i) for i in sprite_list], scale_factor=scale_value, delay=delay)
+    return s

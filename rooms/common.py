@@ -37,10 +37,10 @@ class Room:
             i.sprite.update()
             self._display_.blit(i.sprite.image, i.pos)
         draw.flip()
-        self.c+=1
-        if self.c>=30:
-            self.c=0
-            globals.time+=1
+        self.c += 1
+        if self.c >= 30:
+            self.c = 0
+            globals.time += 1
         globals.clock.tick(30)
 
     def update_loop(self):
@@ -54,7 +54,7 @@ class RoomWalkable(Room):
         self.chara = globals.chara
         self.walk_animate_init()
         self.walk_tick = 0
-        self.c=0
+        self.c = 0
 
     def walk_animate_init(self):
         scale_factor = 2
@@ -87,13 +87,13 @@ class RoomWalkable(Room):
         self.walk_animate_loop()
         for i in self.objects:
             i.sprite.update()
-            self._display_.blit(i.sprite.image, i.pos)
+            self._display_.blit(i.sprite.image, i.sprite.rect)
             globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
             i.redraw()
-        self.c+=1
-        if self.c>=30:
-            self.c=0
-            globals.time+=1
+        self.c += 1
+        if self.c >= 30:
+            self.c = 0
+            globals.time += 1
         draw.flip()
         if not globals.event_lock:
             for event in pygame.event.get():
