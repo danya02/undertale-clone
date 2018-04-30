@@ -92,7 +92,7 @@ class TextPopup(Popup):
         super().__init__()
         self.metatyper = None
         self.text = text
-        self.surface = pygame.Surface((100,100))
+        self.surface = pygame.Surface((504,200))
         self.on_loop = on_loop
         self.thread = None
         self.skips = None
@@ -100,7 +100,7 @@ class TextPopup(Popup):
         self.finished = None
 
     def create_metatyper(self):
-        self.metatyper = typer.MetaTyper(self.text)
+        self.metatyper = typer.MetaTyper(self.text, surface = self.surface)
         self.metatyper.on_loop = self.save_surface
 
     def save_surface(self, surface: pygame.Surface):

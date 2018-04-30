@@ -9,6 +9,7 @@ import threading
 import sprite
 import typer
 import globals
+import draw
 
 
 def scale(img, times):
@@ -37,6 +38,7 @@ def normal():
     def update(s: pygame.Surface, d: pygame.Surface):
         d.blit(s, (150, 300))
         pygame.display.update()
+
     if not globals.DEBUG:
         for i in text:
             globals.display.blit(image.image, image.rect)
@@ -52,7 +54,7 @@ def normal():
     i = pygame.image.load("sprites/splash.png")
     i = scale(i, 2)
     globals.display.blit(i, (323 - (i.get_width() / 2), 252 - (i.get_height() / 2)))
-    pygame.display.update()
+    draw.flip()
     pygame.mixer.music.play()
     pygame.time.wait(5000)
 
@@ -65,7 +67,7 @@ def glitched():
         images += [scale(pygame.image.load("sprites/spr_fakeintro" + str(i) + ".png"), 2.5)]
     pygame.mixer.music.play()
     globals.display.blit(images[0], (323 - (images[0].get_width() / 2), 0))
-    pygame.display.update()
+    draw.flip()
     pygame.time.delay(6000)
     pygame.time.delay(2000)
     tmp = object()
@@ -89,7 +91,7 @@ def glitched():
     pygame.mixer.music.load("mus/mus_story_stuck.ogg")
     pygame.mixer.music.play(-1)
     globals.display.blit(images[1], (323 - (images[1].get_width() / 2), 0))
-    pygame.display.update()
+    draw.flip()
     pygame.time.wait(5000)
     del tmp
     pygame.time.wait(200)
@@ -102,16 +104,19 @@ def gone():
     pygame.mixer.music.play(-1)
     for i in range(600 if not globals.DEBUG else 5):
         pygame.time.wait(1000)
-    surface = pygame.Surface((504,200))
+    surface = pygame.Surface((504, 200))
+
     def update(s: pygame.Surface, d: pygame.Surface):
         d.blit(s, (150, 300))
-        pygame.display.update()
+        draw.flip()
 
     def clean(s: pygame.Surface):
         s.fill(pygame.Color('black'))
         return None
+
     def create(text):
-        return typer.MetaTyper(text, update, globals.display, clean, delay=0.1, surface=surface,can_skip=False)
+        return typer.MetaTyper(text, update, globals.display, clean, delay=0.1, surface=surface, can_skip=False)
+
     text = ['Interesting./',
             'You want to go back./',
             'You want to go bac^1k&to the worl^2d&you destroyed./',
@@ -125,7 +130,7 @@ def gone():
     mt = create(text)
     mt.run()
     globals.display.fill(pygame.Color('black'))
-    pygame.display.flip()
+    draw.flip()
     pygame.time.wait(7000)
     text = ['Perhaps./',
             'We can reach a compromise./',
@@ -135,14 +140,16 @@ def gone():
             ' & &         Yes         No\C']
     mt = create(text)
     s, choice = mt.run()
+
     def eternal():
-        text = ['Then stay here for&all eternity./','']
+        text = ['Then stay here for&all eternity./', '']
         mt = create(text)
         mt.run()
         globals.display.fill(pygame.Color('black'))
-        pygame.display.flip()
+        draw.flip()
         while 1:
             pass
+
     if choice == typer.Typer.CHOICE1:
         text = ['Then it is agreed./',
                 'You will give me your SOUL.& &         Yes         No\C']

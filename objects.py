@@ -8,6 +8,7 @@ import globals
 import popup
 import sprite
 import sfx
+import draw
 
 
 class Object:
@@ -76,11 +77,11 @@ class TestTextBoxObject(Object):
 
     def draw_recvd_surface(self):
         globals.display.blit(self.popup.surface, (0, 0))  # TODO: make this more accurate. Critical.
-        pygame.display.flip()
+        draw.flip()
 
     def popup_worker(self):
         globals.event_lock = True
-        self.popup = popup.TextPopup('Hello World!^1/', self.draw_recvd_surface)
+        self.popup = popup.TextPopup(['Hello World!^1/'], self.draw_recvd_surface)
         self.popup.start()
         while not self.popup.finished:
             self.popup.draw()

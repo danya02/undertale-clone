@@ -5,6 +5,7 @@ import threading
 
 import pygame
 import globals
+import draw
 
 
 class Room:
@@ -20,7 +21,8 @@ class Room:
         self.song = None
         self._display_ = pygame.display.get_surface()
         self.run_update = True
-        self.update_thread = threading.Thread(target=self.update_loop,name='update loop for {}'.format(self.__class__.__name__),daemon=True)
+        self.update_thread = threading.Thread(target=self.update_loop,
+                                              name='update loop for {}'.format(self.__class__.__name__), daemon=True)
         self.update_thread.start()
 
     def __del__(self):
@@ -32,7 +34,7 @@ class Room:
         for i in self.objects:
             i.sprite.update()
             self._display_.blit(i.sprite.image, i.pos)
-        pygame.display.flip()
+        draw.flip()
 
     def update_loop(self):
         pass
@@ -75,7 +77,7 @@ class RoomWalkable(Room):
         chara = self.chara
         self.walk_animate_loop()
         globals.display.blit(chara.sprite, (int(chara.pos[0]), int(chara.pos[1])))
-        pygame.display.flip()
+        draw.flip()
         if not globals.event_lock:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -86,7 +88,8 @@ class RoomWalkable(Room):
                     if event.key == pygame.K_RETURN or event.key == pygame.K_z:
                         for i in self.objects:
                             if int(math.fabs(i.x - chara.x) * 2) + int(
-                                    math.fabs(i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
+                                    math.fabs(
+                                        i.y - chara.y) * 2) < 100:  # TODO: decrease dubiosity of distance formula.
                                 i.interact(chara)
                                 break
             keys_pressed = pygame.key.get_pressed()
@@ -109,6 +112,6 @@ class RoomWalkable(Room):
             else:
                 chara.moving = False
         self.clock.tick(30)
-        pygame.display.update()
+        draw.flip()
         if not int(chara.pos[0]) in range(646) or not int(chara.pos[1]) in range(505):
             raise NotImplementedError("chara left screen area", 1)
