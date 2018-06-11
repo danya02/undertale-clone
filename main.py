@@ -31,7 +31,7 @@ def invoke_dog(text=None, kind=0):
     Supposed to work under as few assumptions as possible.
     """
     pygame.init()
-    d = pygame.display.set_mode((800, 600))
+    d = pygame.display.set_mode((640, 480))
     s1 = pygame.image.fromstring(gzip.decompress(
         b'\x1f\x8b\x08\x00\xd8\xb8\xbbY\x02\xffc`\xa0\x14\xfc\xff\xff\x1fB\xc2\x01\\\x90\x18\xbdX\x01%z\tjGv$V\xc7'
         b'\x93g).\x13\xe0"h\n\x881\x01Y1ZP\x13\xe3\x184\xff\x92\xe1\x8b\xffd\x81\x11\xa5\x97\xd4\x80\xc5\xaf\x17\x7f'
@@ -69,7 +69,7 @@ def invoke_dog(text=None, kind=0):
     if isinstance(text, str):
         length = 1000
         height = 33
-        while not length < 800:
+        while not length < 640:
             height -= 1
             try:
                 font = pygame.font.Font("fonts/determinationmono.ttf", height)
@@ -81,7 +81,7 @@ def invoke_dog(text=None, kind=0):
         for i in text:
             length = 1000
             height = 33
-            while not length < 800:
+            while not length < 630:
                 height -= 1
                 try:
                     font = pygame.font.Font("fonts/determinationmono.ttf", height)
@@ -123,17 +123,17 @@ def invoke_dog(text=None, kind=0):
             except IndexError:
                 pass
 
-            globals.display.fill(pygame.Color('black'))
-            globals.display.blit([s1, s3][kind],
-                                 (
-                                     400 - int([s1, s3][kind].get_width() / 2),
-                                     300 - int([s1, s3][kind].get_height() / 2)))
-            globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+            d.fill(pygame.Color('black'))
+            d.blit([s1, s3][kind],
+                   (
+                       320 - int([s1, s3][kind].get_width() / 2),
+                       240 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (320 - int(text_obj.get_width() / 2), int(480 * 0.75)))
             if scrollable:
                 if cursor > 0:
-                    globals.display.blit(left_pointer, (50, 500))
+                    d.blit(left_pointer, (50, 400))
                 if cursor < len(text_objs) - 1:
-                    globals.display.blit(right_pointer, (750, 500))
+                    d.blit(right_pointer, (590, 400))
 
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
@@ -154,17 +154,17 @@ def invoke_dog(text=None, kind=0):
             except IndexError:
                 pass
 
-            globals.display.fill(pygame.Color('black'))
-            globals.display.blit([s2, s4][kind],
-                                 (
-                                     400 - int([s1, s3][kind].get_width() / 2),
-                                     300 - int([s1, s3][kind].get_height() / 2)))
-            globals.display.blit(text_obj, (400 - int(text_obj.get_width() / 2), 450))
+            d.fill(pygame.Color('black'))
+            d.blit([s2, s4][kind],
+                   (
+                       320 - int([s1, s3][kind].get_width() / 2),
+                       240 - int([s1, s3][kind].get_height() / 2)))
+            d.blit(text_obj, (320 - int(text_obj.get_width() / 2), int(480 * 0.75)))
             if scrollable:
                 if cursor > 0:
-                    globals.display.blit(left_pointer, (50, 500))
+                    d.blit(left_pointer, (50, 400))
                 if cursor < len(text_objs) - 1:
-                    globals.display.blit(right_pointer, (750, 500))
+                    d.blit(right_pointer, (590, 400))
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
     except pygame.error:
@@ -175,14 +175,14 @@ def invoke_dog(text=None, kind=0):
 if __name__ == "__main__":
     try:
         import globals
+
+        globals.display = pygame.display.set_mode((640, 480))
         import frisk
         import rooms
         import sprite
         import menu
         import sfx
         import typer
-
-        globals.display = pygame.display.set_mode((646, 505))
     except ImportError as e:
         frisk = None
         rooms = None
@@ -222,8 +222,6 @@ def init():
     globals.room = rooms.get_room(0)
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
-
-
 
 
 def maincycle():
