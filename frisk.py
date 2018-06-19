@@ -61,8 +61,8 @@ class Frisk:
         self.y = 300
         self.movespeed = 5
         self.dir = 2
-        self.sprites = [sprite.DynamicSprite('spr_maincharau'), sprite.DynamicSprite('spr_maincharar'),
-                        sprite.DynamicSprite('spr_maincharad'), sprite.DynamicSprite('spr_maincharal')]
+        self.sprites = [sprite.Sprite.get_sprite('spr_maincharau'), sprite.Sprite.get_sprite('spr_maincharar'),
+                        sprite.Sprite.get_sprite('spr_maincharad'), sprite.Sprite.get_sprite('spr_maincharal')]
         self.sprite = None
         self.moving = False
         self.stats = [(1, 20, 10, 10, 0),

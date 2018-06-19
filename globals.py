@@ -15,17 +15,19 @@ right = pygame.K_RIGHT
 down = pygame.K_DOWN
 arrows = [up, left, right, down]
 
-width=646
-height=505
-center=(int(width/2),int(height/2))
+width = 640
+height = 480
+center = (int(width / 2), int(height / 2))
+screen_rect = pygame.Rect((0, 0, width, height))
 
 # DO NOT CHANGE THESE to avoid UNDOCUMENTED BAD STUFF.
 running = True
 event_lock = False
+layers = {}
 
 chara = frisk.Frisk()
 display = pygame.Surface((1, 1))
-room = rooms.Room()
+room = None
 last_save_room_name = ''
 time = 0
 start_time = 0.0

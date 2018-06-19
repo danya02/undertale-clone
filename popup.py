@@ -9,6 +9,7 @@ import font
 import typer
 import sfx
 
+
 class Popup:
     def __init__(self):
         self.surface = pygame.Surface((0, 0))
@@ -42,7 +43,7 @@ class SAVEPopup(Popup):
         self.text_location = font.render(globals.last_save_room_name)
         self.text_save = font.render('Save')
         self.text_return = font.render('Return')
-        self.heart = sprite.get_sprite('spr_heart')
+        self.heart = sprite.Sprite.get_sprite('spr_heart')
         sfx.get_sound(0x29fb).play()
 
     def update(self):
@@ -55,7 +56,7 @@ class SAVEPopup(Popup):
             self.surface.blit(self.text_location, (32, 75))
             self.surface.blit(self.text_save, (64, 138))
             self.surface.blit(self.text_return, (253, 138))
-            self.surface.blit(self.heart.image, (35, 138) if self.cursor == 1 else (224, 138))
+            self.surface.blit(self.heart.image[0], (35, 138) if self.cursor == 1 else (224, 138))
             self.dirty = False
 
     def on_button(self, button):
@@ -94,7 +95,7 @@ class TextPopup(Popup):
         super().__init__()
         self.metatyper = None
         self.text = text
-        self.surface = pygame.Surface((504,200))
+        self.surface = pygame.Surface((504, 200))
         self.on_loop = on_loop
         self.thread = None
         self.skips = None
@@ -102,7 +103,7 @@ class TextPopup(Popup):
         self.finished = None
 
     def create_metatyper(self):
-        self.metatyper = typer.MetaTyper(self.text, surface = self.surface)
+        self.metatyper = typer.MetaTyper(self.text, surface=self.surface)
         self.metatyper.on_loop = self.save_surface
 
     def save_surface(self, surface: pygame.Surface):
@@ -111,10 +112,10 @@ class TextPopup(Popup):
 
     def run(self):
         self.finished = False
-        self.skips,self.choice = self.metatyper.run()
+        self.skips, self.choice = self.metatyper.run()
         self.finished = True
 
     def start(self):
         self.create_metatyper()
-        self.thread = threading.Thread(target=self.run, name='thread for TextPopup',daemon=True)
+        self.thread = threading.Thread(target=self.run, name='thread for TextPopup', daemon=True)
         self.thread.start()

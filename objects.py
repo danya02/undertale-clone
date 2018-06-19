@@ -33,7 +33,8 @@ class Object:
 
     def __init__(self, pos):
         self.pos = pos
-        self.sprite = sprite.StaticSprite(pygame.Surface((1, 1)))
+        self.sprite = sprite.Sprite()
+        self.weight = 16384
 
     def interact(self, chara):
         pass
@@ -45,7 +46,7 @@ class Object:
 class RaiseException(Object):
     def __init__(self, pos):
         super(RaiseException, self).__init__(pos)
-        self.sprite = sprite.get_sprite("spr_mysteryman", scale_value=2)
+        self.sprite = sprite.Sprite.get_sprite("spr_mysteryman", scale_value=2, run=False)
 
     def interact(self, chara):
         raise RuntimeError
@@ -54,7 +55,7 @@ class RaiseException(Object):
 class SAVEPoint(Object):  # TODO: add additional text before showing popup.
     def __init__(self, pos):
         super(SAVEPoint, self).__init__(pos)
-        self.sprite = sprite.get_dynamic_sprite("spr_savepoint", scale_value=2, delay=15)
+        self.sprite = sprite.Sprite.get_sprite("spr_savepoint", scale_value=2, delay=15)
         self.popup = None
         self.thread = None
 
@@ -83,13 +84,17 @@ class SAVEPoint(Object):  # TODO: add additional text before showing popup.
 class TestTextBoxObject(Object):
     def __init__(self, pos):
         super().__init__(pos)
-        self.sprite = sprite.get_sprite('spr_charad', 2)
+        self.sprite = sprite.Sprite.get_sprite('spr_charad', 2, False)
         self.popup = None
         self.thread = None
+        self.weight = 1024
 
     def draw_recvd_surface(self):
-        globals.display.blit(self.popup.surface, (0, 0))  # TODO: make this more accurate. Critical.
-        draw.flip()
+        l = draw.get_layer(self.weight)
+        r: pygame.Rect = self.popup.surface.get_rect()
+        r.bottomright = globals.screen_rect.bottomright
+        l.surface.blit(self.popup.surface, (0, 0))  # TODO: make this more accurate. Critical.
+        l.flip()
 
     def popup_worker(self):
         globals.event_lock = True
@@ -98,6 +103,7 @@ class TestTextBoxObject(Object):
         while not self.popup.finished:
             self.popup.draw()
         globals.event_lock = False
+        draw.get_layer(self.weight).destroy()
 
     def interact(self, chara):
         self.thread = threading.Thread(target=self.popup_worker, daemon=True,
@@ -113,7 +119,7 @@ class TestMovingObject(Object):
         self.motion = threading.Thread(target=self.motionloop, name='motion of {}'.format(str(self.__class__.__name__)),
                                        daemon=True)
         self.motion.start()
-        self.sprite = sprite.get_dynamic_sprite("spr_tobdogl", scale_value=4)
+        self.sprite = sprite.Sprite.get_sprite("spr_tobdogl", scale_value=4)
         self.sprite.delay = 30
 
     def motionloop(self):

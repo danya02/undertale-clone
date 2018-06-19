@@ -107,16 +107,16 @@ def invoke_dog(text=None, kind=0):
     try:
         while 1:
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         sys.exit()
-                    elif event.key == K_LEFT:
+                    elif event.key == pygame.K_LEFT:
                         cursor = max(cursor - 1, 0)
-                    elif event.key == K_RIGHT:
+                    elif event.key == pygame.K_RIGHT:
                         cursor = min(cursor + 1, len(text_objs) - 1)
             try:
                 text_obj = text_objs[cursor]
@@ -138,16 +138,16 @@ def invoke_dog(text=None, kind=0):
             pygame.display.update()
             pygame.time.wait([250, 500][kind])
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         sys.exit()
-                    elif event.key == K_LEFT:
+                    elif event.key == pygame.K_LEFT:
                         cursor = max(cursor - 1, 0)
-                    elif event.key == K_RIGHT:
+                    elif event.key == pygame.K_RIGHT:
                         cursor = min(cursor + 1, len(text_objs) - 1)
             try:
                 text_obj = text_objs[cursor]
@@ -183,6 +183,9 @@ if __name__ == "__main__":
         import menu
         import sfx
         import typer
+        import draw
+        draw.init()
+
     except ImportError as e:
         frisk = None
         rooms = None

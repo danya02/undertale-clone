@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 # coding=utf-8
 import os
-import pygame
 import random
 import string
 import threading
 
+import pygame
+
+import globals
 import sprite
 import typer
-import globals
-import draw
 
+# TODO: move these to rooms.
 
 def scale(img, times):
     return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
@@ -19,7 +20,7 @@ def scale(img, times):
 def normal():
     pygame.display.set_caption('UNDERTALE')
     pygame.mixer.music.load("mus/mus_story_91.ogg")
-    image = sprite.get_dynamic_sprite('spr_introimage', 2)
+    image = sprite.Sprite.get_sprite('spr_introimage', 2)
     image.rect.x = 0
     image.rect.y = 0
 
@@ -54,7 +55,7 @@ def normal():
     i = pygame.image.load("sprites/splash.png")
     i = scale(i, 2)
     globals.display.blit(i, (323 - (i.get_width() / 2), 252 - (i.get_height() / 2)))
-    draw.flip()
+    pygame.display.flip()
     pygame.mixer.music.play()
     pygame.time.wait(5000)
 
@@ -67,7 +68,7 @@ def glitched():
         images += [scale(pygame.image.load("sprites/spr_fakeintro" + str(i) + ".png"), 2.5)]
     pygame.mixer.music.play()
     globals.display.blit(images[0], (323 - (images[0].get_width() / 2), 0))
-    draw.flip()
+    pygame.display.flip()
     pygame.time.delay(6000)
     pygame.time.delay(2000)
     tmp = object()
@@ -91,7 +92,7 @@ def glitched():
     pygame.mixer.music.load("mus/mus_story_stuck.ogg")
     pygame.mixer.music.play(-1)
     globals.display.blit(images[1], (323 - (images[1].get_width() / 2), 0))
-    draw.flip()
+    pygame.display.flip()
     pygame.time.wait(5000)
     del tmp
     pygame.time.wait(200)
@@ -108,7 +109,7 @@ def gone():
 
     def update(s: pygame.Surface, d: pygame.Surface):
         d.blit(s, (150, 300))
-        draw.flip()
+        pygame.display.flip()
 
     def clean(s: pygame.Surface):
         s.fill(pygame.Color('black'))
@@ -130,7 +131,7 @@ def gone():
     mt = create(text)
     mt.run()
     globals.display.fill(pygame.Color('black'))
-    draw.flip()
+    pygame.display.flip()
     pygame.time.wait(7000)
     text = ['Perhaps./',
             'We can reach a compromise./',
@@ -146,7 +147,7 @@ def gone():
         mt = create(text)
         mt.run()
         globals.display.fill(pygame.Color('black'))
-        draw.flip()
+        pygame.display.flip()
         while 1:
             pass
 

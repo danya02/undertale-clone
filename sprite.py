@@ -9,63 +9,59 @@ import re
 SPRITE_DIR = "./sprites/"
 
 
-def scale(img: pygame.Surface, times: float):
-    return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
+def scale(img: (pygame.Surface, (int, int)), times: float):
+    return pygame.transform.scale(img[0], (int(img[0].get_width() * times), int(img[0].get_height() * times))), (
+        img[1][0] * times, img[1][1] * times)
 
 
-class StaticSprite(pygame.sprite.Sprite):
-    def __init__(self, sprite: pygame.Surface, x: int = 0, y: int = 0, scale_factor: float = 1):
-        super().__init__()
-        self.image = scale(sprite, scale_factor)
-        self.rect = sprite.get_rect()
-        self.rect.centerx = x
-        self.rect.centery = y
-
-
-class DynamicSprite(pygame.sprite.Sprite):
-    def __init__(self, frames: [pygame.Surface] = None, pos: (int, int) = (0, 0), delay: int = 100,
-                 scale_factor: float = 1.0):
+class Sprite(pygame.sprite.Sprite):
+    def __init__(self):
 
         super().__init__()
-        self.frames = [pygame.Surface((0, 0))] if not isinstance(frames, list) else frames
-        self.frames = [scale(i, scale_factor) for i in self.frames]
+        self.frames = [(pygame.Surface((0, 0)), (0, 0))]
         self.index = 0
         self.image = self.frames[0]
-        self.rect = self.image.get_rect()
-        self.rect.centerx, self.rect.centery = pos
-        self.delay = delay
+        self.delay = 1
+        self.rect: pygame.Rect = self.image[0].get_rect()
         self.counter = 0
+        self.run_animation = True
 
     def update(self, update_index: bool = False):
         super().update()
-        if update_index:
-            self.index += 1
-            if self.index == len(self.frames):
-                self.index = 0
-            self.image = self.frames[self.index]
-        else:
-            self.counter += 1
-            if self.counter == self.delay:
-                self.counter = 0
+        global_origin = (self.rect.left + self.image[1][0], self.rect.top + self.image[1][1])
+        if self.run_animation:
+            if update_index:
                 self.index += 1
-                if self.index == len(self.frames):
+                if self.index >= len(self.frames):
                     self.index = 0
                 self.image = self.frames[self.index]
-        center = self.rect.center
-        self.rect = self.image.get_rect()
-        self.rect.center = center
+            else:
+                self.counter += 1
+                if self.counter >= self.delay:
+                    self.counter = 0
+                    self.index += 1
+                    if self.index == len(self.frames):
+                        self.index = 0
+                    self.image = self.frames[self.index]
+        self.rect: pygame.Rect = self.image[0].get_rect()
+        self.rect.left = global_origin[0] - self.image[1][0]
+        self.rect.top = global_origin[1] - self.image[1][1]
 
+    def scale_self(self, factor: float) -> None:
+        self.frames = [scale(i, factor) for i in self.frames]
 
-def get_sprite(name: str, scale_value: float = 1.0) -> StaticSprite:
-    return StaticSprite(pygame.image.load(SPRITE_DIR + name + "_0.png"), scale_factor=scale_value)
-
-
-def get_dynamic_sprite(name: str, scale_value: float = 1, delay: int = 100) -> DynamicSprite:
-    sprite_list = []
-    r = re.compile(name + '_[0-9]+.png')
-    for i in os.listdir(SPRITE_DIR):
-        if r.match(i):
-            sprite_list.append(SPRITE_DIR + i)
-    sprite_list.sort(key=lambda x: float(x.strip('.png').split(name + '_')[1]))
-    s = DynamicSprite([pygame.image.load(i) for i in sprite_list], scale_factor=scale_value, delay=delay)
-    return s
+    @staticmethod
+    def get_sprite(name: str, scale_value: float = 1, delay: int = 100, run: bool = True):  # TODO: use decompilation.
+        sprite_list = []
+        r = re.compile(name + '_[0-9]+.png')
+        for i in os.listdir(SPRITE_DIR):
+            if r.match(i):
+                sprite_list.append(SPRITE_DIR + i)
+        sprite_list.sort(key=lambda x: float(x.strip('.png').split(name + '_')[1]))
+        s = Sprite()
+        s.frames = [(pygame.image.load(i), (0, 0)) for i in sprite_list]
+        s.scale_self(scale_value)
+        s.delay = delay
+        s.run_animation = run
+        s.image = s.frames[0]
+        return s
