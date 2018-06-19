@@ -31,6 +31,15 @@ def cutout(src: pygame.Surface, area: pygame.Rect) -> pygame.Surface:
     return outp
 
 
+def get_texture_from_num(index: int) -> pygame.Surface:
+    texdata = json.load(open('decompilation/texpage/{}.json'.format(index)))
+    sheet = get_texsheet(texdata['sheetid'])
+    srcrect = pygame.Rect((texdata['src']['x'], texdata['src']['y']),
+                          (texdata['src']['width'], texdata['src']['height']))
+    surface = cutout(sheet, srcrect)
+    return surface
+
+
 class Sprite(pygame.sprite.Sprite):
     def __init__(self):
 
@@ -72,15 +81,8 @@ class Sprite(pygame.sprite.Sprite):
 
         data = json.load(open('decompilation/sprite/{}.json'.format(name)))
         textures = data['textures']
-        surfaces = []
-        for i in textures:
-            texdata = json.load(open('decompilation/texpage/{}.json'.format(i)))
-            sheet = get_texsheet(texdata['sheetid'])
-            srcrect = pygame.Rect((texdata['src']['x'], texdata['src']['y']),
-                                  (texdata['src']['width'], texdata['src']['height']))
-            surface = cutout(sheet, srcrect)
-            origin = (data['origin']['x'], data['origin']['y'])
-            surfaces.append(tuple([surface, origin]))
+        origin = (data['origin']['x'], data['origin']['y'])
+        surfaces = [tuple([get_texture_from_num(i), origin]) for i in textures]
         s = Sprite()
         s.frames = surfaces
         s.scale_self(scale_value)
