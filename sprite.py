@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # coding=utf-8
+import json
 import os
 import pygame
 import threading
@@ -12,6 +13,22 @@ SPRITE_DIR = "./sprites/"
 def scale(img: (pygame.Surface, (int, int)), times: float):
     return pygame.transform.scale(img[0], (int(img[0].get_width() * times), int(img[0].get_height() * times))), (
         img[1][0] * times, img[1][1] * times)
+
+
+texsheets: {int: pygame.Surface} = {}
+
+
+def get_texsheet(index: int) -> pygame.Surface:
+    if index not in texsheets:
+        texsheet = pygame.image.load('decompilation/texture/{}.png'.format(index))
+        texsheets.update({index: texsheet})
+    return texsheets[index]
+
+
+def cutout(src: pygame.Surface, area: pygame.Rect) -> pygame.Surface:
+    outp = pygame.Surface(area.size)
+    outp.blit(src, (-area.x, -area.y))
+    return outp
 
 
 class Sprite(pygame.sprite.Sprite):
@@ -51,15 +68,21 @@ class Sprite(pygame.sprite.Sprite):
         self.frames = [scale(i, factor) for i in self.frames]
 
     @staticmethod
-    def get_sprite(name: str, scale_value: float = 1, delay: int = 100, run: bool = True):  # TODO: use decompilation.
-        sprite_list = []
-        r = re.compile(name + '_[0-9]+.png')
-        for i in os.listdir(SPRITE_DIR):
-            if r.match(i):
-                sprite_list.append(SPRITE_DIR + i)
-        sprite_list.sort(key=lambda x: float(x.strip('.png').split(name + '_')[1]))
+    def get_sprite(name: str, scale_value: float = 1, delay: int = 100, run: bool = True):
+
+        data = json.load(open('decompilation/sprite/{}.json'.format(name)))
+        textures = data['textures']
+        surfaces = []
+        for i in textures:
+            texdata = json.load(open('decompilation/texpage/{}.json'.format(i)))
+            sheet = get_texsheet(texdata['sheetid'])
+            srcrect = pygame.Rect((texdata['src']['x'], texdata['src']['y']),
+                                  (texdata['src']['width'], texdata['src']['height']))
+            surface = cutout(sheet, srcrect)
+            origin = (data['origin']['x'], data['origin']['y'])
+            surfaces.append(tuple([surface, origin]))
         s = Sprite()
-        s.frames = [(pygame.image.load(i), (0, 0)) for i in sprite_list]
+        s.frames = surfaces
         s.scale_self(scale_value)
         s.delay = delay
         s.run_animation = run
