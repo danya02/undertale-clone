@@ -23,12 +23,13 @@ class Menu(common.Room):
         self.background = pygame.Surface((0, 0))
 
 
-class IntroScreen(Menu):
+class room_introstory(Menu):
     def __init__(self):
         super().__init__()
         self.image = sprite.Sprite.get_sprite('spr_introimage', 2)
         self.image.rect.x = 0
         self.image.rect.y = 0
+        self.id = 1
         self.text_layer = draw.get_layer(32768)
         self.leave_intro = False
         self.text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1  ",
@@ -51,49 +52,70 @@ class IntroScreen(Menu):
             globals.chara.go_to_room(rooms.Room_TEST1())
 
     def show_intro(self):
-        while not self.leave_intro:
-            self.text_layer.show()
+        self.text_layer.show()
 
-            def update(s: pygame.Surface, d: draw.Layer):
-                d.surface.blit(s, (150, 300))
-                d.flip()
+        def update(s: pygame.Surface, d: draw.Layer):
+            d.surface.blit(s, (150, 300))
+            d.flip()
 
-            if not globals.DEBUG:
-                for i in self.text:
-                    self.background_layer.surface.blit(self.image.image[0], self.image.rect)
-                    self.background_layer.flip()
-                    s = pygame.Surface((504, 200))
-                    t = typer.Typer()
-                    t.text = i
-                    t.surface = s
-                    t.to_on_run_loop = self.text_layer
-                    t.on_run_loop = update
-                    t.run()
-                    self.image.update(True)
-            pygame.mixer.music.load("mus/mus_intronoise.ogg")
-            i = pygame.image.load("sprites/splash.png")
-            i = sprite.scale(i, 2)
-            self.background_layer.surface.blit(i, (
-                globals.screen_rect.right / 2 - i.get_width() / 2, globals.screen_rect.bottom / 2 - i.get_height() / 2))
-            self.background_layer.flip()
-            self.text_layer.clear()
-            pygame.mixer.music.play()
-            pygame.time.wait(2000)
-            s = font.render('[PRESS Z OR ENTER]', 'fnt_small')
-            r = s.get_rect()
-            r.centerx = globals.screen_rect.centerx
-            r.centery = globals.screen_rect.height * 0.75
-            self.text_layer.surface.blit(s, r)
-            self.text_layer.flip()
-            if input.await_keypress(globals.accept,5000)[1]:
-                self.leave_intro = True
+        if not globals.DEBUG: # TODO: implement keyboard-based skipping.
+            for i in self.text:
+                self.background_layer.surface.blit(self.image.image[0], self.image.rect)
+                self.background_layer.flip()
+                s = pygame.Surface((504, 200))
+                t = typer.Typer()
+                t.text = i
+                t.surface = s
+                t.to_on_run_loop = self.text_layer
+                t.on_run_loop = update
+                t.run()
+                self.image.update(True)  # TODO: fix final oversized sprite
+
     def on_exit(self):
         self.text_layer.destroy()
 
 
-class FakeIntroScreen(Menu):
+class room_introimage(Menu):
     def __init__(self):
         super().__init__()
+        self.id = 2
+        self.text_layer = draw.get_layer(32768)
+        self.return_ = True
+
+    def on_enter(self):
+        self.show_image()
+        if self.return_:
+            globals.chara.go_to_room(rooms.room_introstory)
+
+    def show_image(self):
+        pygame.mixer.music.load("mus/mus_intronoise.ogg")
+        i = pygame.image.load("sprites/splash.png")
+        i = sprite.scale(i, 2)
+        self.background_layer.surface.blit(i, (
+            globals.screen_rect.right / 2 - i.get_width() / 2, globals.screen_rect.bottom / 2 - i.get_height() / 2))
+        self.background_layer.flip()
+        self.text_layer.clear()
+        pygame.mixer.music.play()
+        if input.await_keypress(globals.accept, 2000)[1]:
+            self.leave()
+        s = font.render('[PRESS Z OR ENTER]', 'fnt_small')
+        r = s.get_rect()
+        r.centerx = globals.screen_rect.centerx
+        r.centery = globals.screen_rect.height * 0.75
+        self.text_layer.surface.blit(s, r)
+        self.text_layer.flip()
+        if input.await_keypress(globals.accept, 5000)[1]:
+            self.leave()
+
+    def leave(self):
+        globals.chara.go_to_room(rooms.get_room('room_area1'))
+        self.return_ = False
+
+
+class room_f_intro(Menu):
+    def __init__(self):
+        super().__init__()
+        self.id = 291
         self.image = sprite.Sprite.get_sprite('spr_fakeintro', 2)
         self.image2 = sprite.Sprite.get_sprite('spr_fakeintro2', 2)
         self.image.rect.x = 0
@@ -163,9 +185,10 @@ class FakeIntroScreen(Menu):
         pygame.display.set_caption('Floweytale')
 
 
-class GoneIntroScreen(Menu):
+class room_nothingness(Menu):
     def __init__(self):
         super().__init__()
+        self.id = 324
 
     def on_enter(self):
         if super().on_enter():

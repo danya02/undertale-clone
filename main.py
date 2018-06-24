@@ -217,11 +217,11 @@ def init():
     chara.save('')
     globals.chara = chara
     if os.path.exists('system_information_962'):
-        globals.room = rooms.GoneIntroScreen()
+        globals.room = rooms.room_nothingness()
     elif False:  # TODO: criteria for summoning Flowey EX  and better room handling should go here
-        globals.room = rooms.FakeIntroScreen()
+        globals.room = rooms.room_f_intro()
     else:
-        globals.room = rooms.IntroScreen()
+        globals.room = rooms.room_introstory()
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
     draw.init()
