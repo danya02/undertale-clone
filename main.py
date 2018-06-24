@@ -33,6 +33,11 @@ def invoke_dog(text=None, kind=0):
     Supposed to work under as few assumptions as possible.
     """
     pygame.init()
+    try:
+        import globals
+        globals.running = False
+    except ImportError:
+        pass
     d = pygame.display.set_mode((640, 480))
     s1 = pygame.image.fromstring(gzip.decompress(
         b'\x1f\x8b\x08\x00\xd8\xb8\xbbY\x02\xffc`\xa0\x14\xfc\xff\xff\x1fB\xc2\x01\\\x90\x18\xbdX\x01%z\tjGv$V\xc7'

@@ -10,6 +10,7 @@ class Layer:
     def __init__(self):
         self.surface = pygame.Surface((globals.width, globals.height),pygame.SRCALPHA, 32).convert_alpha()
         self.surface_draw = self.surface.copy()
+        self.shift=(0,0) # TODO: only the SAVEPopup requires this, so fix that and remove ASAP
         self.weight = 0
         self.draw = True
         self.want_removed = False
@@ -47,7 +48,7 @@ def draw_loop():
                 globals.layers.pop(i)
             else:
                 if globals.layers[i].draw:
-                    globals.display.blit(globals.layers[i].surface_draw, (0, 0))
+                    globals.display.blit(globals.layers[i].surface_draw, globals.layers[i].shift) # TODO: remove the shift.
         print()
         pygame.display.flip()
         clock.tick(30)

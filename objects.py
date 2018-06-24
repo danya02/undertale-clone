@@ -63,16 +63,11 @@ class SAVEPoint(Object):  # TODO: add additional text before showing popup.
         globals.event_lock = True
         self.popup = popup.SAVEPopup()
         while not self.popup.finished:
-            self.popup.draw()
             for i in pygame.event.get():
                 if i.type == pygame.KEYDOWN:
                     self.popup.on_button(i.key)
         globals.event_lock = False
 
-    def redraw(self):
-        if self.popup is not None:
-            if not self.popup.finished:
-                self.popup.draw()
 
     def interact(self, chara):
         sfx.get_sound(0x29fb).play()

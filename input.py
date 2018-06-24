@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import pygame
 import time
+import globals
 
 
 def await_keypress(keys: list, timeout: int = 0):
@@ -10,7 +11,7 @@ def await_keypress(keys: list, timeout: int = 0):
     started_at = time.time()
     seeked_key = None
     while not seeked_key:
-        pygame.event.pump() # TODO: check if this breaks multithreaded keypress seek.
+        pygame.event.pump()  # TODO: check if this breaks multithreaded keypress seek.
         keypress = pygame.key.get_pressed()
         for i in keys:
             if keypress[i]:
@@ -21,3 +22,9 @@ def await_keypress(keys: list, timeout: int = 0):
             return int((time.time() - started_at) * 1000), None
 
     return int((time.time() - started_at) * 1000), seeked_key
+
+
+def get_single_menu_interaction() -> int:
+    """Returns one keypress for a menu interaction: arrow keys, accept, or decline, and wait infinitely."""
+    return await_keypress(globals.accept + globals.cancel + [globals.left, globals.right, globals.up, globals.down], 0)[
+        1]
