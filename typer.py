@@ -178,11 +178,11 @@ class Typer:
                         if i.key in globals.accept:
                             self.pause = False
                 if self.choice_mode:
-                    heart = sprite.get_sprite('spr_heart', 1)
+                    heart = sprite.Sprite.get_sprite('spr_heart', 1)
                     while 1:
                         heart.rect.center = (132, 82) if self.choice == 0 else (325, 82)
                         self.render()
-                        self.surface.blit(heart.image, heart.rect)
+                        self.surface.blit(heart.image[0], heart.rect)
                         self.run_wrapper()
                         for i in pygame.event.get(pygame.KEYDOWN):
                             if i.key in [globals.left, globals.right]:

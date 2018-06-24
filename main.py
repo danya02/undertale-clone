@@ -222,7 +222,7 @@ def init():
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
-    globals.room = rooms.FakeIntroScreen()
+    globals.room = rooms.GoneIntroScreen()
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
     draw.init()

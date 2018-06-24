@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # coding=utf-8
+import os
 import random
 import string
 import threading
@@ -144,3 +145,89 @@ class FakeIntroScreen(Menu):
         del tmp
         pygame.time.wait(200)
         pygame.display.set_caption('Floweytale')
+
+
+class GoneIntroScreen(Menu):
+    def __init__(self):
+        super().__init__()
+
+    def on_enter(self):
+        if super().on_enter():
+            self.run_actions()
+
+    def run_actions(self):
+        pygame.display.set_caption('  ')
+        pygame.mixer.music.load("mus/mus_wind.ogg")
+        pygame.mixer.music.play(-1)
+        for i in range(600 if not globals.DEBUG else 5):
+            pygame.time.wait(1000)
+        surface = pygame.Surface((504, 200))
+
+        def update(s: pygame.Surface, d: draw.Layer):
+            d.surface.blit(s, (150, 300))
+            d.flip()
+
+        def clean(s: draw.Layer):
+            s.surface.fill(pygame.Color('black'))
+            return None
+
+        def create(text):
+            return typer.MetaTyper(text, update, self.background_layer, clean, delay=0.1, surface=surface,
+                                   can_skip=False)
+
+        text = ['Interesting./',
+                'You want to go back./',
+                'You want to go bac^1k&to the worl^2d&you destroyed./',
+                'It was you who pushed&everythin^1g to its edge./',
+                'It was you who led the worl^1d&to its destruction./',
+                'But you cannot accept it./',
+                'You think you are above&consequences.&         Yes         No\C'] if not globals.DEBUG else [
+            'Interesting./', 'You think you are above&consequences.&         Yes         No\C']
+        mt = create(text)
+        s, choice = mt.run()
+        text = ['Exactly./' if choice == typer.Typer.CHOICE1 else 'Then what are you looking for?/', '  ']
+        mt = create(text)
+        mt.run()
+        self.background_layer.surface.fill(pygame.Color('black'))
+        self.background_layer.flip()
+        pygame.time.wait(7000)
+        text = ['Perhaps./',
+                'We can reach a compromise./',
+                'You still have somethin^1g&I want./',
+                'Give it to me./',
+                'And I will bring this&world back./',
+                ' & &         Yes         No\C']
+        mt = create(text)
+        s, choice = mt.run()
+
+        def eternal():
+            text = ['Then stay here for&all eternity./', '']
+            mt = create(text)
+            mt.run()
+            self.background_layer.destroy()
+            pygame.display.flip()
+            while 1:
+                pass
+
+        if choice == typer.Typer.CHOICE1:
+            text = ['Then it is agreed./',
+                    'You will give me your SOUL.& &         Yes         No\C']
+            mt = create(text)
+            s, choice = mt.run()
+            if choice == typer.Typer.CHOICE1:
+                try:
+                    os.remove('system_information_962')
+                except FileNotFoundError:
+                    pass
+                with open('system_information_963', 'w') as a:
+                    a.write('a')
+                text = ['.../',
+                        'Then^1, it is done./']
+                mt = create(text)
+                mt.run()
+                self.background_layer.destroy()
+                os.abort()
+            else:
+                eternal()
+        else:
+            eternal()
