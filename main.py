@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # coding=utf-8
 import gzip
+import os
 import sys
 import threading
 import traceback
@@ -181,7 +182,6 @@ if __name__ == "__main__":
         import frisk
         import rooms
         import sprite
-        import menu
         import sfx
         import typer
         import draw
@@ -194,23 +194,12 @@ if __name__ == "__main__":
         globals = None
         sfx = None
         typer = None
+        draw = None
         exc_type, exc_value, exc_traceback = sys.exc_info()
         output = traceback.format_exception(exc_type, exc_value, exc_traceback)
         output = [i[:-1].translate({ord('\n'): ':'}) for i in output]
         output = list(reversed(output))[:-1]
         invoke_dog(output)
-
-
-def intro(version=0):
-    """
-    Play the Undertale intro, as seen on program start. Return when the intro is done.
-    """
-    if version == 0:  # normal intro
-        menu.normal()
-    elif version == 1:  # hijacked by Flowey EX
-        menu.glitched()
-    elif version == 2:  # world destroyed
-        menu.gone()
 
 
 def init():
@@ -222,7 +211,12 @@ def init():
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
-    globals.room = rooms.GoneIntroScreen()
+    if os.path.exists('system_information_962'):
+        globals.room = rooms.GoneIntroScreen()
+    elif False:  # TODO: criteria for summoning Flowey EX  and better room handling should go here
+        globals.room = rooms.FakeIntroScreen()
+    else:
+        globals.room = rooms.IntroScreen()
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
     draw.init()
@@ -238,12 +232,6 @@ def maincycle():
 if __name__ == "__main__":
     try:
         init()
-        try:
-            open('system_information_962')
-            # intro(2)
-        except FileNotFoundError:
-            # intro()
-            pass
         maincycle()
     except globals.UndertaleError as e:
         if len(e.args) > 0:
