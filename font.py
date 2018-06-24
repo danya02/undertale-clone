@@ -2,9 +2,9 @@
 #  coding=utf-8
 import json
 import pygame
-import sprite
 
-fonts = []
+import data_types
+import sprite
 
 
 class Font:
@@ -59,8 +59,16 @@ class Font:
         return f
 
 
-def render(text: str, font: str, color: pygame.Color = pygame.Color('white')):
-    raise DeprecationWarning
+class FontsDict(data_types.DynamicLoadDict):
+    def fetch(self, name):
+        return Font.load_from_json(name)
+
+
+fonts = FontsDict()
+
+
+def render(text: str, font: str, color: pygame.Color = None):
+    fonts[font].render(text, color)
 
 
 if __name__ == '__main__':
@@ -70,7 +78,7 @@ if __name__ == '__main__':
     for i in ['fnt_comicsans', 'fnt_curs', 'fnt_dmg', 'fnt_main', 'fnt_maintext', 'fnt_maintext_2', 'fnt_papyrus',
               'fnt_plain', 'fnt_plainbig', 'fnt_small', 'fnt_wingdings']:
         print('Showing font {}...'.format(i))
-        f = Font.load_from_json(i)
+        f = fonts[i]
         print('This is lowercase in red')
         debug_tools.show_surface(f.render(string.ascii_lowercase, pygame.Color('red')))
         input()

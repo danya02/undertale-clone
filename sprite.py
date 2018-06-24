@@ -1,11 +1,8 @@
 #!/usr/bin/python3
 # coding=utf-8
 import json
-import os
 import pygame
-import threading
-
-import re
+import data_types
 
 SPRITE_DIR = "./sprites/"
 
@@ -28,14 +25,12 @@ def convert_color(img: pygame.Surface, color_from: pygame.Color, color_to: pygam
     return outp
 
 
-texsheets: {int: pygame.Surface} = {}
+class TexsheetList(data_types.DynamicLoadDict):
+    def fetch(self, name):
+        return pygame.image.load('decompilation/texture/{}.png'.format(index))
 
 
-def get_texsheet(index: int) -> pygame.Surface:
-    if index not in texsheets:
-        texsheet = pygame.image.load('decompilation/texture/{}.png'.format(index))
-        texsheets.update({index: texsheet})
-    return texsheets[index]
+texsheets = TexsheetList()
 
 
 def json_rect_to_real_rect(json_rect: {str: int}) -> pygame.Rect:
@@ -50,7 +45,7 @@ def cutout(src: pygame.Surface, area: pygame.Rect) -> pygame.Surface:
 
 def get_texture_from_num(index: int) -> pygame.Surface:
     texdata = json.load(open('decompilation/texpage/{}.json'.format(index)))
-    sheet = get_texsheet(texdata['sheetid'])
+    sheet = texsheets[texdata['sheetid']]
     srcrect = pygame.Rect((texdata['src']['x'], texdata['src']['y']),
                           (texdata['src']['width'], texdata['src']['height']))
     surface = cutout(sheet, srcrect)
