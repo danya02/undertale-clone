@@ -25,6 +25,10 @@ def get_texsheet(index: int) -> pygame.Surface:
     return texsheets[index]
 
 
+def json_rect_to_real_rect(json_rect: {str: int}) -> pygame.Rect:
+    return pygame.Rect((json_rect['x'], json_rect['y']), (json_rect['width'], json_rect['height']))
+
+
 def cutout(src: pygame.Surface, area: pygame.Rect) -> pygame.Surface:
     outp = pygame.Surface(area.size)
     outp.blit(src, (-area.x, -area.y))
