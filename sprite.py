@@ -27,7 +27,7 @@ def convert_color(img: pygame.Surface, color_from: pygame.Color, color_to: pygam
 
 class TexsheetList(data_types.DynamicLoadDict):
     def fetch(self, name):
-        return pygame.image.load('decompilation/texture/{}.png'.format(index))
+        return pygame.image.load('decompilation/texture/{}.png'.format(name))
 
 
 texsheets = TexsheetList()
@@ -43,13 +43,17 @@ def cutout(src: pygame.Surface, area: pygame.Rect) -> pygame.Surface:
     return outp
 
 
-def get_texture_from_num(index: int) -> pygame.Surface:
-    texdata = json.load(open('decompilation/texpage/{}.json'.format(index)))
-    sheet = texsheets[texdata['sheetid']]
-    srcrect = pygame.Rect((texdata['src']['x'], texdata['src']['y']),
-                          (texdata['src']['width'], texdata['src']['height']))
-    surface = cutout(sheet, srcrect)
-    return surface
+class TextureList(data_types.DynamicLoadDict):
+    def fetch(self, name):
+        texdata = json.load(open('decompilation/texpage/{}.json'.format(name)))
+        sheet = texsheets[texdata['sheetid']]
+        srcrect = pygame.Rect((texdata['src']['x'], texdata['src']['y']),
+                              (texdata['src']['width'], texdata['src']['height']))
+        surface = cutout(sheet, srcrect)
+        return surface
+
+
+textures = TextureList()
 
 
 class Sprite(pygame.sprite.Sprite):
@@ -92,9 +96,9 @@ class Sprite(pygame.sprite.Sprite):
     def get_sprite(name: str, scale_value: float = 1, delay: int = 100, run: bool = True):
 
         data = json.load(open('decompilation/sprite/{}.json'.format(name)))
-        textures = data['textures']
+        texture_indexes = data['textures']
         origin = (data['origin']['x'], data['origin']['y'])
-        surfaces = [tuple([get_texture_from_num(i), origin]) for i in textures]
+        surfaces = [tuple([textures[i], origin]) for i in texture_indexes]
         s = Sprite()
         s.frames = surfaces
         s.scale_self(scale_value)

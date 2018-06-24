@@ -48,7 +48,7 @@ class Font:
         f.bold = data['bold']
         f.italic = data['italic']
         f.antialias = data['antialias']
-        texture = sprite.get_texture_from_num(data['texture'])
+        texture = sprite.textures[data['texture']]
         for i in data['chars']:
             char = i['char']
             rect = sprite.json_rect_to_real_rect(i['frame'])
