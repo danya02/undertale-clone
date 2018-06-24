@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # coding=utf-8
+import time
 import pygame
 import actor
 import globals
 import sprite
-import time
 
 
 class Typer:
@@ -172,7 +172,7 @@ class Typer:
                 if self.can_skip:
                     for i in pygame.event.get(pygame.KEYDOWN):
                         if i.key in globals.cancel:
-                            will_skip=True
+                            will_skip = True
                 while self.pause:
                     for i in pygame.event.get(pygame.KEYDOWN):
                         if i.key in globals.accept:
@@ -180,25 +180,28 @@ class Typer:
                 if self.choice_mode:
                     heart = sprite.get_sprite('spr_heart', 1)
                     while 1:
-                        heart.rect.center = (132,82) if self.choice ==0 else (325,82)
+                        heart.rect.center = (132, 82) if self.choice == 0 else (325, 82)
                         self.render()
                         self.surface.blit(heart.image, heart.rect)
                         self.run_wrapper()
                         for i in pygame.event.get(pygame.KEYDOWN):
-                            if i.key in [globals.left,globals.right]:
+                            if i.key in [globals.left, globals.right]:
                                 self.choice = 1 if self.choice is 0 else 0
                             elif i.key in globals.accept:
                                 raise UserWarning
             except IndexError:
                 return Typer.SKIPPED if will_skip else Typer.NOTSKIPPED
             except UserWarning:
-                return Typer.CHOICE1 if self.choice==0 else Typer.CHOICE2
+                return Typer.CHOICE1 if self.choice == 0 else Typer.CHOICE2
+
 
 class MetaTyper:
     """
     Class for creating Typers sequentially.
     """
-    def __init__(self,text:[str],on_run_loop:callable = lambda x,y:None,to_on_run_loop=None,clean_param:callable=lambda x:None, **opts):
+
+    def __init__(self, text: [str], on_run_loop: callable = lambda x, y: None, to_on_run_loop=None,
+                 clean_param: callable = lambda x: None, **opts):
         self.text = text
         self.on_loop = on_run_loop
         self.on_loop_param = to_on_run_loop
@@ -206,7 +209,8 @@ class MetaTyper:
         self.options = opts
         self.skipcount = 0
         self.choice = Typer.NOCHOICE
-    def run(self) -> (int,int):
+
+    def run(self) -> (int, int):
         """
         Execute text render and collect results.
         :return: 2-tuple of int: how many skips occurred and what is the resulting choice.
@@ -220,15 +224,15 @@ class MetaTyper:
                 typer.__setattr__(i, self.options[i])
             res = typer.run()
             if res == Typer.SKIPPED:
-                self.skipcount+=1
-            elif res in [Typer.CHOICE1,typer.CHOICE2]:
+                self.skipcount += 1
+            elif res in [Typer.CHOICE1, typer.CHOICE2]:
                 self.choice = res
             self.clean_param(self.on_loop_param)
         return self.skipcount, self.choice
 
 
 if __name__ == '__main__':
-    s = pygame.display.set_mode((750, 750))
+    s = pygame.display.set_mode((480, 200))
     t = Typer()
     t.surface = s
     t.text = '\W* \OBravery^1. \YJustice.\W  &*\B Integrity^1. \GKindness^1.\W &*\P Perseverance^1. \LPatience. \W &' \

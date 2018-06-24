@@ -1,14 +1,10 @@
 #!/usr/bin/python3
 #  coding=utf-8
 import json
-
 import pygame
-
-import draw
 import sprite
 
-fonts = [pygame.font.Font('fonts/{}.ttf'.format(i), j) for i, j in
-         [('determinationsans', 32), ('determinationmono', 32), ('undertalepapyrus', 32), ('undertalesans', 32)]]
+fonts = []
 
 
 class Font:
@@ -23,8 +19,25 @@ class Font:
     def __str__(self):
         return '{} ({})'.format(self.json_name, self.sysname)
 
-    def render(self, text: str) -> pygame.Surface:
-        pass
+    def render(self, text: str, color: pygame.Color = None) -> pygame.Surface:
+        text_surfaces = []
+        for i in text:
+            obj = self.characters.get(i, None)
+            if obj is not None:
+                text_surfaces.append(obj)
+        x = 0
+        y = 0
+        for i in text_surfaces:
+            x += i[1]
+            y = max(y, i[0].get_height())
+        s = pygame.Surface((x, y))
+        x = 0
+        for i in text_surfaces:
+            s.blit(i[0], (x + i[2], 0))
+            x += i[1]
+        if color is None:
+            return s
+        return sprite.convert_color(s, pygame.Color('white'), color)
 
     @staticmethod
     def load_from_json(name: str):
@@ -43,7 +56,30 @@ class Font:
             shift = i['shift']
             offset = i['offset']
             f.characters.update({char: (surface, shift, offset)})
+        return f
 
 
-def render(text: str, font: int = 0, color: pygame.Color = pygame.Color('white')):
-    return fonts[font].render(text, False, color)
+def render(text: str, font: str, color: pygame.Color = pygame.Color('white')):
+    raise DeprecationWarning
+
+
+if __name__ == '__main__':
+    import debug_tools
+    import string
+
+    for i in ['fnt_comicsans', 'fnt_curs', 'fnt_dmg', 'fnt_main', 'fnt_maintext', 'fnt_maintext_2', 'fnt_papyrus',
+              'fnt_plain', 'fnt_plainbig', 'fnt_small', 'fnt_wingdings']:
+        print('Showing font {}...'.format(i))
+        f = Font.load_from_json(i)
+        print('This is lowercase in red')
+        debug_tools.show_surface(f.render(string.ascii_lowercase, pygame.Color('red')))
+        input()
+        print('This is uppercase in green')
+        debug_tools.show_surface(f.render(string.ascii_uppercase, pygame.Color('green')))
+        input()
+        print('This is digits in blue')
+        debug_tools.show_surface(f.render(string.digits, pygame.Color('blue')))
+        input()
+        print('This is punctuation in default')
+        debug_tools.show_surface(f.render(string.punctuation))
+        input()

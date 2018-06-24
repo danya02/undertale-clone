@@ -15,6 +15,19 @@ def scale(img: (pygame.Surface, (int, int)), times: float):
         img[1][0] * times, img[1][1] * times)
 
 
+def convert_color(img: pygame.Surface, color_from: pygame.Color, color_to: pygame.Color) -> pygame.Surface:
+    # FIXME: This is most likely not optimal. Change to some method that's better suited.
+    if color_from == color_to:
+        return img.copy()
+    outp = pygame.Surface(img.get_size())
+    outp.blit(img, (0, 0))
+    for x in range(img.get_width()):
+        for y in range(img.get_height()):
+            if img.get_at((x, y)) == color_from:
+                outp.set_at((x, y), color_to)
+    return outp
+
+
 texsheets: {int: pygame.Surface} = {}
 
 
