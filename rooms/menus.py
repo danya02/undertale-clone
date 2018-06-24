@@ -8,6 +8,8 @@ import threading
 import pygame
 
 import draw
+import font
+import input
 import globals
 import rooms
 import sprite
@@ -28,6 +30,7 @@ class IntroScreen(Menu):
         self.image.rect.x = 0
         self.image.rect.y = 0
         self.text_layer = draw.get_layer(32768)
+        self.leave_intro = False
         self.text = ["Long ago^1, two races&ruled over Earth^1:&HUMANS and MONSTERS^5. ^1  ",
                      "One day^1, war broke&out between the two&races^5. ^1  ",
                      "After a long battle^1,&the humans were&victorious^5. ^1  ",
@@ -48,31 +51,44 @@ class IntroScreen(Menu):
             globals.chara.go_to_room(rooms.Room_TEST1())
 
     def show_intro(self):
-        def update(s: pygame.Surface, d: draw.Layer):
-            d.surface.blit(s, (150, 300))
-            d.flip()
+        while not self.leave_intro:
+            self.text_layer.show()
 
-        if not globals.DEBUG:
-            for i in self.text:
-                self.background_layer.surface.blit(self.image.image[0], self.image.rect)
-                self.background_layer.flip()
-                s = pygame.Surface((504, 200))
-                t = typer.Typer()
-                t.text = i
-                t.surface = s
-                t.to_on_run_loop = self.text_layer
-                t.on_run_loop = update
-                t.run()
-                self.image.update(True)
-        pygame.mixer.music.load("mus/mus_intronoise.ogg")
-        i = pygame.image.load("sprites/splash.png")
-        i = sprite.scale(i, 2)
-        self.background_layer.surface.blit(i, (
-            globals.screen_rect.right / 2 - i.get_width() / 2, globals.screen_rect.bottom / 2 - i.get_height() / 2))
-        self.background_layer.flip()
+            def update(s: pygame.Surface, d: draw.Layer):
+                d.surface.blit(s, (150, 300))
+                d.flip()
+
+            if not globals.DEBUG:
+                for i in self.text:
+                    self.background_layer.surface.blit(self.image.image[0], self.image.rect)
+                    self.background_layer.flip()
+                    s = pygame.Surface((504, 200))
+                    t = typer.Typer()
+                    t.text = i
+                    t.surface = s
+                    t.to_on_run_loop = self.text_layer
+                    t.on_run_loop = update
+                    t.run()
+                    self.image.update(True)
+            pygame.mixer.music.load("mus/mus_intronoise.ogg")
+            i = pygame.image.load("sprites/splash.png")
+            i = sprite.scale(i, 2)
+            self.background_layer.surface.blit(i, (
+                globals.screen_rect.right / 2 - i.get_width() / 2, globals.screen_rect.bottom / 2 - i.get_height() / 2))
+            self.background_layer.flip()
+            self.text_layer.clear()
+            pygame.mixer.music.play()
+            pygame.time.wait(2000)
+            s = font.render('[PRESS Z OR ENTER]', 'fnt_small')
+            r = s.get_rect()
+            r.centerx = globals.screen_rect.centerx
+            r.centery = globals.screen_rect.height * 0.75
+            self.text_layer.surface.blit(s, r)
+            self.text_layer.flip()
+            if input.await_keypress(globals.accept,5000)[1]:
+                self.leave_intro = True
+    def on_exit(self):
         self.text_layer.destroy()
-        pygame.mixer.music.play()
-        pygame.time.wait(5000)
 
 
 class FakeIntroScreen(Menu):
