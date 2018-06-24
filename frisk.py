@@ -108,6 +108,11 @@ class Frisk:
         m,s = divmod(int(self.time), 60)
         return '{}:{}'.format(str(m).rjust(2,'0'), str(s).rjust(2,'0'))
 
+    def go_to_room(self, room:rooms.Room):
+        globals.room.on_exit()
+        globals.room = room
+        globals.room.on_enter()
+
     def save(self, file: str = None):
         """
         "You're filled with determination..."

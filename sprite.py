@@ -8,8 +8,11 @@ SPRITE_DIR = "./sprites/"
 
 
 def scale(img: (pygame.Surface, (int, int)), times: float):
-    return pygame.transform.scale(img[0], (int(img[0].get_width() * times), int(img[0].get_height() * times))), (
-        img[1][0] * times, img[1][1] * times)
+    try:
+        return pygame.transform.scale(img[0], (int(img[0].get_width() * times), int(img[0].get_height() * times))), (
+            img[1][0] * times, img[1][1] * times)
+    except TypeError:
+        return pygame.transform.scale(img, (int(img.get_width() * times), int(img.get_height() * times)))
 
 
 def convert_color(img: pygame.Surface, color_from: pygame.Color, color_to: pygame.Color) -> pygame.Surface:

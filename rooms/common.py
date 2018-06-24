@@ -37,6 +37,8 @@ class Room:
         self.objects = []
         self.song = None
         self.run_update = True
+        self.entered = False
+        self.exited = False
         self.update_thread = threading.Thread(target=self.update_loop,
                                               name='update loop for {}'.format(self.__class__.__name__), daemon=True)
         self.update_thread.start()
@@ -61,6 +63,20 @@ class Room:
 
     def update_loop(self):
         pass
+
+    def on_enter(self):
+        if self.entered:
+            return False
+        else:
+            self.entered = True
+            return True
+
+    def on_exit(self):
+        if self.exited:
+            return False
+        else:
+            self.exited = True
+            return True
 
 
 class RoomWalkable(Room):

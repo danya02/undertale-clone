@@ -67,8 +67,8 @@ class FontsDict(data_types.DynamicLoadDict):
 fonts = FontsDict()
 
 
-def render(text: str, font: str, color: pygame.Color = None):
-    fonts[font].render(text, color)
+def render(text: str, font: str = 'fnt_main', color: pygame.Color = None):
+    return fonts[font].render(text, color)
 
 
 if __name__ == '__main__':

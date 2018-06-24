@@ -2,6 +2,7 @@
 # coding=utf-8
 import gzip
 import sys
+import threading
 import traceback
 import time
 import pygame
@@ -184,7 +185,6 @@ if __name__ == "__main__":
         import sfx
         import typer
         import draw
-        draw.init()
 
     except ImportError as e:
         frisk = None
@@ -222,12 +222,14 @@ def init():
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
-    globals.room = rooms.get_room(0)
+    globals.room = rooms.IntroScreen()
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
+    draw.init()
 
 
 def maincycle():
+    threading.Thread(target=globals.room.on_enter, name='on_enter runner for first room').start()
     while globals.running:
         if globals.room:
             globals.room.draw()
@@ -240,7 +242,8 @@ if __name__ == "__main__":
             open('system_information_962')
             intro(2)
         except FileNotFoundError:
-            intro()
+            # intro()
+            pass
         maincycle()
     except globals.UndertaleError as e:
         if len(e.args) > 0:
