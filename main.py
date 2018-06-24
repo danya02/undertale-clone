@@ -222,7 +222,7 @@ def init():
     chara.set_ini_value("General", "time", 0.0)
     chara.save('')
     globals.chara = chara
-    globals.room = rooms.IntroScreen()
+    globals.room = rooms.FakeIntroScreen()
     pygame.event.set_blocked(
         [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])  # we don't care for mouse interactions
     draw.init()
@@ -240,7 +240,7 @@ if __name__ == "__main__":
         init()
         try:
             open('system_information_962')
-            intro(2)
+            # intro(2)
         except FileNotFoundError:
             # intro()
             pass
@@ -250,6 +250,8 @@ if __name__ == "__main__":
             invoke_dog("", e.args[0])
         else:
             invoke_dog()
+    except (SystemExit, KeyboardInterrupt):
+        globals.running = False
     except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         output = traceback.format_exception(exc_type, exc_value, exc_traceback)
