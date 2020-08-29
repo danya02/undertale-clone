@@ -59,6 +59,7 @@ class Room:
         if self.c >= 30:
             self.c = 0
             globals.time += 1
+        pygame.event.pump()
         self.clock.tick(30)
 
     def update_loop(self):
